@@ -1,0 +1,455 @@
+/* ==========================================
+   HOME
+========================================== */
+
+.home {
+  width: 100%;
+  max-width: 1100px;
+
+  margin: 0 auto;
+}
+
+/* ==========================================
+   BIENVENIDA
+========================================== */
+
+.welcome-section {
+  max-width: 760px;
+
+  margin-top: 8px;
+  margin-bottom: 42px;
+}
+
+.welcome-label {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color: #8b6b09;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  letter-spacing: 0.15em;
+}
+
+.welcome-section h1 {
+  color: var(--navy);
+
+  font-size: clamp(
+    2.7rem,
+    5vw,
+    4.5rem
+  );
+
+  line-height: 1.02;
+
+  letter-spacing: -0.045em;
+
+  font-weight: 800;
+}
+
+.welcome-section h1 span {
+  color: #47627f;
+}
+
+.welcome-section p {
+  max-width: 620px;
+
+  margin-top: 20px;
+
+  color: var(--text-secondary);
+
+  font-size: 1rem;
+
+  line-height: 1.65;
+}
+
+/* ==========================================
+   TARJETAS PRINCIPALES
+========================================== */
+
+.home-actions {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 18px;
+}
+
+.action-card {
+  position: relative;
+
+  min-height: 285px;
+
+  padding: 25px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid var(--border);
+
+  border-radius: 18px;
+
+  color: var(--text);
+
+  text-decoration: none;
+
+  box-shadow:
+    0 6px 20px
+    rgba(23, 41, 66, 0.04);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+
+  border-color: #cbd3dc;
+
+  box-shadow:
+    0 14px 34px
+    rgba(23, 41, 66, 0.09);
+}
+
+/* ==========================================
+   ICONO
+========================================== */
+
+.card-icon {
+  width: 58px;
+  height: 58px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  margin-bottom: 30px;
+
+  border-radius: 15px;
+}
+
+/* PDF */
+
+.pdf-card .card-icon {
+  background: var(--yellow-soft);
+
+  color: #98720b;
+}
+
+/* IMAGEN */
+
+.image-card .card-icon {
+  background: #e1eeed;
+
+  color: #315f5b;
+}
+
+/* WEB */
+
+.web-card .card-icon {
+  background: #e8edf5;
+
+  color: #425f83;
+}
+
+/* ==========================================
+   CONTENIDO
+========================================== */
+
+.card-content {
+  flex: 1;
+}
+
+.card-number {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #8a97a7;
+
+  font-size: 0.68rem;
+  font-weight: 800;
+
+  letter-spacing: 0.13em;
+}
+
+.card-content h2 {
+  color: var(--navy);
+
+  font-size: 1.25rem;
+
+  line-height: 1.25;
+
+  font-weight: 750;
+}
+
+.card-content p {
+  margin-top: 10px;
+
+  color: var(--text-secondary);
+
+  font-size: 0.84rem;
+
+  line-height: 1.6;
+}
+
+/* ==========================================
+   FLECHA
+========================================== */
+
+.card-button {
+  position: absolute;
+
+  right: 22px;
+  bottom: 22px;
+
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  background: #f2f4f7;
+
+  color: var(--navy);
+
+  border-radius: 50%;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.action-card:hover .card-button {
+  background: var(--yellow);
+
+  transform: translateX(2px);
+}
+
+/* ==========================================
+   BLOQUE DE VOZ
+========================================== */
+
+.voice-banner {
+  margin-top: 22px;
+
+  padding:
+    22px
+    24px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  background: var(--navy);
+
+  border-radius: 17px;
+
+  color: #ffffff;
+}
+
+.voice-icon {
+  width: 49px;
+  height: 49px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  background: rgba(
+    255,
+    255,
+    255,
+    0.11
+  );
+
+  color: var(--yellow);
+
+  border-radius: 13px;
+}
+
+.voice-text {
+  flex: 1;
+}
+
+.voice-text strong {
+  display: block;
+
+  color: #ffffff;
+
+  font-size: 0.95rem;
+}
+
+.voice-text p {
+  margin-top: 4px;
+
+  color: #c3cedb;
+
+  font-size: 0.8rem;
+
+  line-height: 1.5;
+}
+
+.listen-page-button {
+  min-height: 45px;
+
+  padding:
+    0
+    18px;
+
+  flex-shrink: 0;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  background: var(--yellow);
+
+  color: var(--navy);
+
+  font-weight: 750;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.listen-page-button:hover {
+  background: #f8d563;
+
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media (max-width: 1024px) {
+  .home-actions {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .web-card {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ==========================================
+   MÓVIL
+========================================== */
+
+@media (max-width: 768px) {
+  .welcome-section {
+    margin-top: 4px;
+    margin-bottom: 30px;
+  }
+
+  .welcome-label {
+    margin-bottom: 10px;
+  }
+
+  .welcome-section h1 {
+    font-size: clamp(
+      2.25rem,
+      11vw,
+      3.2rem
+    );
+
+    line-height: 1.04;
+  }
+
+  .welcome-section p {
+    margin-top: 15px;
+
+    font-size: 0.92rem;
+  }
+
+  .home-actions {
+    grid-template-columns: 1fr;
+
+    gap: 14px;
+  }
+
+  .web-card {
+    grid-column: auto;
+  }
+
+  .action-card {
+    min-height: 220px;
+
+    padding: 22px;
+  }
+
+  .card-icon {
+    width: 52px;
+    height: 52px;
+
+    margin-bottom: 23px;
+  }
+
+  .card-content h2 {
+    font-size: 1.18rem;
+  }
+
+  .card-content p {
+    max-width: 88%;
+
+    font-size: 0.84rem;
+  }
+
+  .card-button {
+    right: 19px;
+    bottom: 19px;
+  }
+
+  .voice-banner {
+    padding: 20px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .listen-page-button {
+    width: 100%;
+  }
+}
+
+/* ==========================================
+   TELÉFONOS PEQUEÑOS
+========================================== */
+
+@media (max-width: 480px) {
+  .welcome-section h1 {
+    font-size: 2.25rem;
+  }
+
+  .action-card {
+    min-height: 215px;
+
+    padding: 20px;
+  }
+
+  .card-content p {
+    padding-right: 15px;
+  }
+}

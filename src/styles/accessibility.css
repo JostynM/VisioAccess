@@ -1,0 +1,314 @@
+/* ==========================================
+   BARRA RÁPIDA DE ACCESIBILIDAD
+========================================== */
+
+.accessibility-bar {
+  width: 100%;
+
+  margin-bottom: 34px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 8px;
+}
+
+/* Texto "Visualización" */
+
+.accessibility-bar > span {
+  margin-right: 4px;
+
+  color: var(--text-secondary);
+
+  font-size: 0.72rem;
+
+  font-weight: 750;
+
+  letter-spacing: 0.01em;
+}
+
+/* ==========================================
+   BOTONES
+========================================== */
+
+.accessibility-bar button {
+  min-width: 43px;
+  min-height: 38px;
+
+  padding:
+    0
+    12px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 5px;
+
+  background: var(--surface);
+
+  color: var(--navy);
+
+  border:
+    1px
+    solid
+    var(--border);
+
+  border-radius: 9px;
+
+  font-size: 0.73rem;
+
+  font-weight: 800;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.accessibility-bar button:hover {
+  background: var(--yellow-soft);
+
+  border-color:
+    var(--yellow-dark);
+
+  transform:
+    translateY(-1px);
+}
+
+/* ==========================================
+   BOTÓN ALTO CONTRASTE
+========================================== */
+
+.accessibility-bar
+.contrast-button {
+  min-width: 128px;
+}
+
+/* ==========================================
+   FOCO DE TECLADO
+========================================== */
+
+.accessibility-bar
+button:focus-visible {
+  outline:
+    3px
+    solid
+    var(--yellow);
+
+  outline-offset: 3px;
+}
+
+/* ==========================================
+   MODO NOCHE
+========================================== */
+
+.app.theme-dark
+.accessibility-bar
+> span {
+  color:
+    var(--text-secondary);
+}
+
+.app.theme-dark
+.accessibility-bar
+button {
+  background: #1b2838;
+
+  color: #edf2f7;
+
+  border-color: #405065;
+}
+
+.app.theme-dark
+.accessibility-bar
+button:hover {
+  background: #26374b;
+
+  color: #ffffff;
+
+  border-color:
+    var(--yellow);
+}
+
+/*
+   El botón de contraste mantiene
+   la misma apariencia oscura.
+*/
+
+.app.theme-dark
+.accessibility-bar
+.contrast-button {
+  background: #1b2838;
+
+  color: #edf2f7;
+}
+
+/* ==========================================
+   ALTO CONTRASTE ACTIVADO
+========================================== */
+
+.high-contrast
+.accessibility-bar
+> span {
+  color: #ffffff;
+}
+
+.high-contrast
+.accessibility-bar
+button {
+  background: #000000;
+
+  color: #ffffff;
+
+  border:
+    2px
+    solid
+    #ffe600;
+}
+
+.high-contrast
+.accessibility-bar
+button:hover {
+  background: #ffe600;
+
+  color: #000000;
+}
+
+.high-contrast
+.accessibility-bar
+.contrast-button {
+  background: #ffe600;
+
+  color: #000000;
+
+  border-color: #ffe600;
+}
+
+/* ==========================================
+   DALTONISMO
+========================================== */
+
+/*
+   No usamos colores fijos para los modos
+   de daltonismo.
+
+   Los botones aprovechan las variables
+   globales definidas por cada paleta.
+*/
+
+.app.color-protanopia
+.accessibility-bar
+button:hover,
+
+.app.color-deuteranopia
+.accessibility-bar
+button:hover,
+
+.app.color-tritanopia
+.accessibility-bar
+button:hover {
+  border-color:
+    var(--yellow);
+}
+
+/* ==========================================
+   NOCHE + DALTONISMO
+========================================== */
+
+.app.theme-dark.color-protanopia
+.accessibility-bar
+button,
+
+.app.theme-dark.color-deuteranopia
+.accessibility-bar
+button,
+
+.app.theme-dark.color-tritanopia
+.accessibility-bar
+button {
+  background: #1b2838;
+
+  color: var(--navy);
+
+  border-color: #405065;
+}
+
+.app.theme-dark.color-protanopia
+.accessibility-bar
+button:hover,
+
+.app.theme-dark.color-deuteranopia
+.accessibility-bar
+button:hover,
+
+.app.theme-dark.color-tritanopia
+.accessibility-bar
+button:hover {
+  background: #26374b;
+
+  border-color:
+    var(--yellow);
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (
+  max-width: 768px
+) {
+  .accessibility-bar {
+    margin-bottom: 24px;
+
+    justify-content:
+      flex-start;
+
+    flex-wrap: wrap;
+  }
+
+  .accessibility-bar
+  > span {
+    width: 100%;
+
+    margin-bottom: 2px;
+  }
+
+  .accessibility-bar
+  button {
+    min-height: 42px;
+  }
+
+  .accessibility-bar
+  .contrast-button {
+    min-width: 145px;
+  }
+}
+
+@media (
+  max-width: 480px
+) {
+  .accessibility-bar {
+    gap: 7px;
+  }
+
+  .accessibility-bar
+  button {
+    padding:
+      0
+      10px;
+  }
+
+  .accessibility-bar
+  .contrast-button {
+    flex: 1;
+
+    min-width: 130px;
+  }
+}

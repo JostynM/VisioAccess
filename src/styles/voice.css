@@ -1,0 +1,1043 @@
+/* ==========================================
+   ASISTENTE DE VOZ
+========================================== */
+
+.voice-page {
+  width: 100%;
+  max-width: 1120px;
+
+  margin: 0 auto;
+}
+
+/* ==========================================
+   ENCABEZADO
+========================================== */
+
+.voice-page-header {
+  max-width: 760px;
+
+  margin-bottom: 30px;
+}
+
+.voice-page-header h1 {
+  color: var(--navy);
+
+  font-size: clamp(
+    2.2rem,
+    4vw,
+    3.4rem
+  );
+
+  line-height: 1.05;
+
+  letter-spacing: -0.035em;
+}
+
+.voice-page-header p {
+  max-width: 650px;
+
+  margin-top: 16px;
+
+  color: #68778b;
+
+  line-height: 1.65;
+}
+
+/* ==========================================
+   PESTAÑAS
+========================================== */
+
+.voice-mode-tabs {
+  width: fit-content;
+
+  margin-bottom: 22px;
+
+  padding: 5px;
+
+  display: flex;
+
+  gap: 4px;
+
+  background: #e9edf2;
+
+  border-radius: 12px;
+}
+
+.voice-mode-tabs button {
+  min-height: 44px;
+
+  padding:
+    0
+    17px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #64758a;
+
+  font-weight: 700;
+}
+
+.voice-mode-tabs button.active {
+  background: #ffffff;
+
+  color: var(--navy);
+
+  box-shadow:
+    0 2px 7px
+    rgba(
+      23,
+      41,
+      66,
+      0.08
+    );
+}
+
+/* ==========================================
+   AVISO
+========================================== */
+
+.voice-warning {
+  margin-bottom: 20px;
+
+  padding: 16px;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  background: #fff5d7;
+
+  color: #70580c;
+
+  border:
+    1px
+    solid
+    #ead99c;
+
+  border-radius: 12px;
+}
+
+.voice-warning svg {
+  flex-shrink: 0;
+}
+
+.voice-warning strong {
+  display: block;
+}
+
+.voice-warning p {
+  margin-top: 4px;
+
+  font-size: 0.82rem;
+
+  line-height: 1.5;
+}
+
+/* ==========================================
+   LAYOUT PRINCIPAL
+========================================== */
+
+.voice-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    310px;
+
+  gap: 25px;
+
+  align-items: start;
+}
+
+.voice-main-card,
+.command-list-card,
+.voice-help-card,
+.command-info-card {
+  padding: 25px;
+
+  background: #ffffff;
+
+  border:
+    1px
+    solid
+    var(--border);
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 6px 20px
+    rgba(
+      23,
+      41,
+      66,
+      0.04
+    );
+}
+
+/* ==========================================
+   CABECERA DE TARJETA
+========================================== */
+
+.voice-card-heading {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.voice-feature-icon {
+  width: 52px;
+  height: 52px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--yellow-soft);
+
+  color: #87660b;
+
+  border-radius: 14px;
+}
+
+.voice-card-heading
+.section-label {
+  margin-bottom: 4px;
+}
+
+.voice-card-heading h2 {
+  color: var(--navy);
+
+  font-size: 1.12rem;
+}
+
+.voice-card-heading p {
+  max-width: 520px;
+
+  margin-top: 5px;
+
+  color: #718096;
+
+  font-size: 0.8rem;
+
+  line-height: 1.5;
+}
+
+/* ==========================================
+   ZONA MICRÓFONO
+========================================== */
+
+.microphone-area {
+  margin-top: 25px;
+
+  padding:
+    31px
+    20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  background: #f7f8fa;
+
+  border:
+    1px
+    solid
+    #e1e6ec;
+
+  border-radius: 15px;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.microphone-area.listening {
+  background: #fff8df;
+
+  border-color: #e7c967;
+}
+
+.microphone-button {
+  width: 78px;
+  height: 78px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border: 0;
+
+  border-radius: 50%;
+
+  background: var(--navy);
+
+  color: #ffffff;
+
+  box-shadow:
+    0 8px 22px
+    rgba(
+      23,
+      41,
+      66,
+      0.17
+    );
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.microphone-button:hover:not(
+  :disabled
+) {
+  transform: scale(1.04);
+}
+
+.microphone-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+.listening
+.microphone-button {
+  background: #a13c32;
+
+  animation:
+    microphonePulse
+    1.5s
+    infinite;
+}
+
+@keyframes microphonePulse {
+  0% {
+    box-shadow:
+      0 0 0 0
+      rgba(
+        161,
+        60,
+        50,
+        0.25
+      );
+  }
+
+  70% {
+    box-shadow:
+      0 0 0 18px
+      rgba(
+        161,
+        60,
+        50,
+        0
+      );
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 0
+      rgba(
+        161,
+        60,
+        50,
+        0
+      );
+  }
+}
+
+.microphone-area > strong {
+  margin-top: 18px;
+
+  color: var(--navy);
+}
+
+.microphone-area > p {
+  max-width: 450px;
+
+  margin-top: 7px;
+
+  color: #718096;
+
+  font-size: 0.81rem;
+
+  line-height: 1.55;
+}
+
+.interim-text {
+  margin-top: 16px;
+
+  padding:
+    10px
+    13px;
+
+  background: #ffffff;
+
+  color: #77600f;
+
+  border-radius: 9px;
+
+  font-size: 0.85rem;
+
+  font-style: italic;
+}
+
+/* ==========================================
+   TEXTO RECONOCIDO
+========================================== */
+
+.voice-transcript-header {
+  margin-top: 25px;
+  margin-bottom: 8px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+.voice-transcript-header
+label {
+  display: block;
+
+  color: var(--navy);
+
+  font-size: 0.84rem;
+  font-weight: 750;
+}
+
+.voice-transcript-header
+div > span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8996a6;
+
+  font-size: 0.7rem;
+}
+
+.voice-transcript-header
+> span {
+  color: #8996a6;
+
+  font-size: 0.7rem;
+}
+
+.voice-main-card textarea {
+  width: 100%;
+
+  min-height: 220px;
+
+  padding: 17px;
+
+  resize: vertical;
+
+  outline: none;
+
+  background: #fbfbfc;
+
+  color: var(--navy);
+
+  border:
+    1px
+    solid
+    #d9e0e8;
+
+  border-radius: 11px;
+
+  line-height: 1.65;
+}
+
+.voice-main-card
+textarea:focus {
+  border-color:
+    var(--yellow-dark);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      244,
+      200,
+      74,
+      0.18
+    );
+}
+
+.clear-voice-button {
+  min-height: 42px;
+
+  margin-top: 11px;
+
+  padding:
+    0
+    14px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  border:
+    1px
+    solid
+    #d5dde6;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: var(--navy);
+
+  font-weight: 700;
+}
+
+.clear-voice-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   AYUDA
+========================================== */
+
+.voice-help-card {
+  position: sticky;
+
+  top: 28px;
+
+  background: #fffaf0;
+
+  border-color: #eadba9;
+}
+
+.voice-help-card h2 {
+  margin-top: 5px;
+  margin-bottom: 23px;
+
+  color: var(--navy);
+}
+
+.voice-help-step {
+  display: grid;
+
+  grid-template-columns:
+    36px
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  margin-bottom: 21px;
+}
+
+.voice-help-step > span {
+  width: 32px;
+  height: 32px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: var(--yellow);
+
+  color: var(--navy);
+
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.voice-help-step strong {
+  display: block;
+
+  color: var(--navy);
+
+  font-size: 0.84rem;
+}
+
+.voice-help-step p {
+  margin-top: 4px;
+
+  color: #70674c;
+
+  font-size: 0.76rem;
+
+  line-height: 1.5;
+}
+
+/* ==========================================
+   COMANDOS
+========================================== */
+
+.commands-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    290px;
+
+  gap: 25px;
+
+  align-items: start;
+}
+
+.command-microphone {
+  margin-top: 24px;
+
+  padding: 18px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 17px;
+
+  background: #f7f8fa;
+
+  border:
+    1px
+    solid
+    #e0e5eb;
+
+  border-radius: 14px;
+}
+
+.command-microphone
+.microphone-button {
+  width: 60px;
+  height: 60px;
+}
+
+.command-microphone
+strong {
+  color: var(--navy);
+}
+
+.command-microphone p {
+  margin-top: 5px;
+
+  color: #718096;
+
+  font-size: 0.78rem;
+
+  line-height: 1.5;
+}
+
+.command-microphone.listening {
+  background: #fff8df;
+
+  border-color: #e8cb70;
+}
+
+.command-heard {
+  margin-top: 14px;
+
+  padding: 12px 14px;
+
+  background: #f5f7f9;
+
+  color: #53647a;
+
+  border-radius: 9px;
+
+  font-size: 0.8rem;
+}
+
+.command-result {
+  margin-top: 14px;
+
+  padding: 12px 14px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  background: #e9f5ef;
+
+  color: #22674e;
+
+  border-radius: 9px;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* ==========================================
+   LISTA DE COMANDOS
+========================================== */
+
+.commands-grid {
+  margin-top: 24px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 12px;
+}
+
+.command-group {
+  padding: 17px;
+
+  background: #f8f9fa;
+
+  border:
+    1px
+    solid
+    #e2e7ed;
+
+  border-radius: 12px;
+}
+
+.command-group h3 {
+  margin-bottom: 12px;
+
+  color: var(--navy);
+
+  font-size: 0.84rem;
+}
+
+.command-group span {
+  display: block;
+
+  margin-top: 8px;
+
+  padding:
+    8px
+    10px;
+
+  background: #ffffff;
+
+  color: #526378;
+
+  border:
+    1px
+    solid
+    #e0e5eb;
+
+  border-radius: 7px;
+
+  font-size: 0.72rem;
+}
+
+/* ==========================================
+   INFORMACIÓN LATERAL
+========================================== */
+
+.command-info-card {
+  position: sticky;
+
+  top: 28px;
+
+  background: #eef5f4;
+
+  border-color: #d3e5e1;
+}
+
+.command-info-card > svg {
+  color: #315f5b;
+}
+
+.command-info-card h2 {
+  margin-top: 14px;
+
+  color: var(--navy);
+
+  font-size: 1rem;
+
+  line-height: 1.35;
+}
+
+.command-info-card p {
+  margin-top: 9px;
+
+  color: #607471;
+
+  font-size: 0.8rem;
+
+  line-height: 1.6;
+}
+
+/* ==========================================
+   MODO SIMPLIFICADO
+========================================== */
+
+.simplified-mode
+.voice-help-card,
+.simplified-mode
+.command-info-card {
+  display: none;
+}
+
+.simplified-mode
+.voice-layout,
+.simplified-mode
+.commands-layout {
+  grid-template-columns: 1fr;
+}
+
+.simplified-mode
+.commands-grid {
+  grid-template-columns: 1fr;
+}
+
+/* ==========================================
+   ALTO CONTRASTE
+========================================== */
+
+.high-contrast
+.voice-page-header h1,
+.high-contrast
+.voice-page-header p {
+  color: #ffffff;
+}
+
+.high-contrast
+.voice-mode-tabs {
+  background: #111111;
+
+  border:
+    1px
+    solid
+    #ffdd00;
+}
+
+.high-contrast
+.voice-mode-tabs button {
+  color: #ffffff;
+}
+
+.high-contrast
+.voice-mode-tabs
+button.active {
+  background: #ffdd00;
+
+  color: #000000;
+}
+
+.high-contrast
+.voice-main-card,
+.high-contrast
+.command-list-card,
+.high-contrast
+.voice-help-card,
+.high-contrast
+.command-info-card {
+  background: #111111;
+
+  color: #ffffff;
+
+  border:
+    2px
+    solid
+    #ffdd00;
+}
+
+.high-contrast
+.voice-card-heading h2,
+.high-contrast
+.voice-card-heading p,
+.high-contrast
+.voice-help-card h2,
+.high-contrast
+.voice-help-step strong,
+.high-contrast
+.voice-help-step p,
+.high-contrast
+.command-info-card h2,
+.high-contrast
+.command-info-card p {
+  color: #ffffff;
+}
+
+.high-contrast
+.voice-feature-icon,
+.high-contrast
+.voice-help-step > span {
+  background: #ffdd00;
+
+  color: #000000;
+}
+
+.high-contrast
+.microphone-area,
+.high-contrast
+.command-microphone {
+  background: #000000;
+
+  border-color: #ffdd00;
+}
+
+.high-contrast
+.microphone-area > strong,
+.high-contrast
+.microphone-area > p,
+.high-contrast
+.command-microphone strong,
+.high-contrast
+.command-microphone p {
+  color: #ffffff;
+}
+
+.high-contrast
+.microphone-button {
+  background: #ffdd00;
+
+  color: #000000;
+}
+
+.high-contrast
+.interim-text {
+  background: #111111;
+
+  color: #ffdd00;
+
+  border:
+    1px
+    solid
+    #ffdd00;
+}
+
+.high-contrast
+.voice-transcript-header
+label,
+.high-contrast
+.voice-transcript-header
+span {
+  color: #ffffff;
+}
+
+.high-contrast
+.voice-main-card textarea {
+  background: #000000;
+
+  color: #ffffff;
+
+  border-color: #ffdd00;
+}
+
+.high-contrast
+.clear-voice-button {
+  background: #000000;
+
+  color: #ffdd00;
+
+  border-color: #ffdd00;
+}
+
+.high-contrast
+.command-group {
+  background: #000000;
+
+  border-color: #ffdd00;
+}
+
+.high-contrast
+.command-group h3 {
+  color: #ffffff;
+}
+
+.high-contrast
+.command-group span {
+  background: #111111;
+
+  color: #ffffff;
+
+  border-color: #ffdd00;
+}
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media (max-width: 1024px) {
+  .voice-layout,
+  .commands-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .voice-help-card,
+  .command-info-card {
+    position: static;
+  }
+}
+
+/* ==========================================
+   MÓVIL
+========================================== */
+
+@media (max-width: 768px) {
+  .voice-page-header h1 {
+    font-size: 2.25rem;
+  }
+
+  .voice-mode-tabs {
+    width: 100%;
+  }
+
+  .voice-mode-tabs button {
+    flex: 1;
+  }
+
+  .voice-main-card,
+  .command-list-card,
+  .voice-help-card,
+  .command-info-card {
+    padding: 19px;
+  }
+
+  .commands-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .voice-transcript-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+}
+
+/* ==========================================
+   TELÉFONOS PEQUEÑOS
+========================================== */
+
+@media (max-width: 480px) {
+  .voice-page-header h1 {
+    font-size: 2rem;
+  }
+
+  .voice-mode-tabs {
+    flex-direction: column;
+  }
+
+  .command-microphone {
+    flex-direction: column;
+
+    text-align: center;
+  }
+
+  .microphone-area {
+    padding:
+      26px
+      15px;
+  }
+}

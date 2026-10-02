@@ -1,0 +1,316 @@
+/* ==========================================
+   TABLET
+========================================== */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 210px;
+  }
+
+  .main-content {
+    margin-left: 210px;
+
+    padding:
+      28px
+      30px
+      50px;
+  }
+
+  .home-actions {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .web-card {
+    grid-column: 1 / -1;
+  }
+
+  .pdf-layout,
+  .ocr-layout,
+  .web-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .help-panel,
+  .ocr-help-panel,
+  .web-help-panel {
+    position: static;
+  }
+}
+
+/* ==========================================
+   MÓVIL
+========================================== */
+
+@media (max-width: 768px) {
+  /*
+   * El sidebar existe,
+   * pero queda escondido fuera de pantalla.
+   */
+
+  .sidebar {
+    width: min(
+      84vw,
+      310px
+    );
+
+    transform:
+      translateX(-105%);
+  }
+
+  /*
+   * Cuando React agrega mobile-open,
+   * aparece.
+   */
+
+  .sidebar.mobile-open {
+    transform:
+      translateX(0);
+  }
+
+  .sidebar-mobile-close {
+    display: grid;
+    place-items: center;
+  }
+
+  .mobile-header {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 1500;
+
+    display: flex;
+  }
+
+  .main-content {
+    margin-left: 0;
+
+    padding:
+      22px
+      18px
+      45px;
+  }
+
+  /*
+   * Barra accesibilidad
+   */
+
+  .accessibility-bar {
+    width: 100%;
+
+    justify-content:
+      flex-start;
+
+    overflow-x: auto;
+
+    margin-bottom: 30px;
+
+    padding-bottom: 5px;
+  }
+
+  .accessibility-bar > span,
+  .accessibility-bar button {
+    flex-shrink: 0;
+  }
+
+  /*
+   * Inicio
+   */
+
+  .home-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .web-card {
+    grid-column: auto;
+  }
+
+  .voice-banner {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .listen-page-button {
+    width: 100%;
+  }
+
+  /*
+   * PDF
+   */
+
+  .pdf-header h1 {
+    font-size: 2.25rem;
+  }
+
+  .pdf-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .pdf-drop-zone {
+    min-height: 310px;
+
+    padding:
+      36px
+      20px;
+  }
+
+  .selected-pdf {
+    padding: 19px;
+  }
+
+  .help-panel {
+    display: block;
+
+    padding: 22px;
+  }
+
+  /*
+   * OCR
+   */
+
+  .ocr-header h1 {
+    font-size: 2.25rem;
+  }
+
+  .ocr-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ocr-drop-zone {
+    min-height: 310px;
+
+    padding:
+      36px
+      20px;
+  }
+
+  .selected-image {
+    padding: 19px;
+  }
+
+  .ocr-help-panel {
+    display: block;
+
+    padding: 22px;
+  }
+
+  /*
+   * WEB
+   */
+
+  .web-header h1 {
+    font-size: 2.25rem;
+  }
+
+  .web-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .url-reader-card,
+  .demo-pages,
+  .manual-reader-card,
+  .web-reader-result {
+    padding: 19px;
+  }
+
+  .demo-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .web-actions {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .read-web-button,
+  .open-site-button {
+    width: 100%;
+  }
+
+  .web-help-panel {
+    display: block;
+
+    padding: 22px;
+  }
+
+  .web-result-top {
+    flex-direction: column;
+  }
+
+  /*
+   * Voz
+   */
+
+  .speech-toolbar {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .speech-main-controls {
+    width: 100%;
+
+    flex-wrap: wrap;
+  }
+
+  .speech-rate {
+    width: 100%;
+
+    justify-content:
+      space-between;
+  }
+}
+
+/* ==========================================
+   TELÉFONOS PEQUEÑOS
+========================================== */
+
+@media (max-width: 480px) {
+  .main-content {
+    padding:
+      18px
+      14px
+      38px;
+  }
+
+  .mobile-header {
+    min-height: 64px;
+
+    padding:
+      11px
+      14px;
+  }
+
+  .mobile-logo-text small {
+    display: none;
+  }
+
+  .accessibility-bar > span {
+    display: none;
+  }
+
+  .welcome-section h1 {
+    font-size: 2.2rem;
+  }
+
+  .pdf-header h1,
+  .ocr-header h1,
+  .web-header h1 {
+    font-size: 2rem;
+  }
+
+  .speech-main-controls {
+    flex-direction: column;
+  }
+
+  .speech-primary-button,
+  .speech-stop-button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,1269 @@
+/* ==========================================
+   CONFIGURACIÓN DE ACCESIBILIDAD
+========================================== */
+
+.settings-page {
+  width: 100%;
+  max-width: 1120px;
+
+  margin: 0 auto;
+}
+
+.settings-header {
+  max-width: 760px;
+
+  margin-bottom: 30px;
+}
+
+.settings-header h1 {
+  color: var(--navy);
+
+  font-size: clamp(
+    2.2rem,
+    4vw,
+    3.4rem
+  );
+
+  line-height: 1.05;
+
+  letter-spacing: -0.035em;
+}
+
+.settings-header p {
+  max-width: 650px;
+
+  margin-top: 15px;
+
+  color: var(--text-secondary);
+
+  line-height: 1.65;
+}
+
+/* ==========================================
+   ESTADO
+========================================== */
+
+.settings-status {
+  margin-bottom: 20px;
+
+  padding: 17px 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  background: var(--surface);
+
+  border:
+    1px
+    solid
+    var(--border);
+
+  border-radius: 14px;
+}
+
+.settings-status strong,
+.settings-status span {
+  display: block;
+}
+
+.settings-status strong {
+  color: var(--navy);
+
+  font-size: 0.88rem;
+}
+
+.settings-status span {
+  margin-top: 3px;
+
+  color: var(--text-secondary);
+
+  font-size: 0.76rem;
+}
+
+.reset-settings-button {
+  min-height: 43px;
+
+  padding: 0 15px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  border:
+    1px
+    solid
+    var(--border);
+
+  border-radius: 9px;
+
+  background: var(--surface);
+
+  color: var(--navy);
+
+  font-weight: 750;
+}
+
+/* ==========================================
+   GRID
+========================================== */
+
+.settings-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 18px;
+}
+
+.settings-card {
+  padding: 24px;
+
+  background: var(--surface);
+
+  border:
+    1px
+    solid
+    var(--border);
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 6px 20px
+    rgba(
+      23,
+      41,
+      66,
+      0.04
+    );
+}
+
+.settings-card-icon {
+  width: 48px;
+  height: 48px;
+
+  margin-bottom: 15px;
+
+  display: grid;
+
+  place-items: center;
+
+  background: var(--yellow-soft);
+
+  color: var(--yellow-dark);
+
+  border-radius: 13px;
+}
+
+.settings-card-heading h2 {
+  color: var(--navy);
+
+  font-size: 1.06rem;
+}
+
+.settings-card-heading p {
+  margin-top: 6px;
+
+  color: var(--text-secondary);
+
+  font-size: 0.8rem;
+
+  line-height: 1.55;
+}
+
+/* ==========================================
+   APARIENCIA DÍA / NOCHE
+========================================== */
+
+.appearance-card {
+  grid-column:
+    1 / -1;
+}
+
+.theme-options {
+  margin-top: 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 12px;
+}
+
+.theme-option {
+  position: relative;
+
+  min-height: 108px;
+
+  padding: 16px;
+
+  display: grid;
+
+  grid-template-columns:
+    47px
+    minmax(
+      0,
+      1fr
+    )
+    30px;
+
+  align-items: center;
+
+  gap: 13px;
+
+  text-align: left;
+
+  background: var(--surface);
+
+  color: var(--text);
+
+  border:
+    2px
+    solid
+    var(--border);
+
+  border-radius: 13px;
+}
+
+.theme-option:hover {
+  border-color:
+    var(--yellow-dark);
+}
+
+.theme-option.selected {
+  border-color:
+    var(--navy);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      23,
+      41,
+      66,
+      0.08
+    );
+}
+
+.theme-option-icon {
+  width: 47px;
+  height: 47px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 12px;
+}
+
+.light-icon {
+  background: #fff3c9;
+
+  color: #88670d;
+}
+
+.dark-icon {
+  background: #253750;
+
+  color: #ffffff;
+}
+
+.theme-option strong,
+.theme-option span {
+  display: block;
+}
+
+.theme-option strong {
+  color: var(--navy);
+
+  font-size: 0.87rem;
+}
+
+.theme-option div > span {
+  margin-top: 4px;
+
+  color: var(--text-secondary);
+
+  font-size: 0.73rem;
+
+  line-height: 1.45;
+}
+
+.theme-check {
+  width: 28px;
+  height: 28px;
+
+  display: grid;
+
+  place-items: center;
+
+  background: var(--navy);
+
+  color: #ffffff;
+
+  border-radius: 50%;
+}
+
+/* ==========================================
+   TAMAÑO DE TEXTO
+========================================== */
+
+.font-size-control {
+  margin-top: 22px;
+
+  padding: 14px;
+
+  display: grid;
+
+  grid-template-columns:
+    60px
+    minmax(
+      0,
+      1fr
+    )
+    60px;
+
+  align-items: center;
+
+  gap: 12px;
+
+  background: var(--background);
+
+  border-radius: 12px;
+}
+
+.font-size-control button {
+  min-height: 46px;
+
+  border:
+    1px
+    solid
+    var(--border);
+
+  border-radius: 9px;
+
+  background: var(--surface);
+
+  color: var(--navy);
+
+  font-weight: 850;
+}
+
+.font-size-control button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+.font-size-value {
+  text-align: center;
+}
+
+.font-size-value strong,
+.font-size-value span {
+  display: block;
+}
+
+.font-size-value strong {
+  color: var(--navy);
+}
+
+.font-size-value span {
+  margin-top: 2px;
+
+  color: var(--text-muted);
+
+  font-size: 0.68rem;
+}
+
+/* ==========================================
+   SWITCHES
+========================================== */
+
+.settings-switch-row {
+  margin-top: 22px;
+
+  padding: 14px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 14px;
+
+  background: var(--background);
+
+  border-radius: 12px;
+}
+
+.settings-switch-row strong,
+.settings-switch-row span {
+  display: block;
+}
+
+.settings-switch-row strong {
+  color: var(--navy);
+
+  font-size: 0.8rem;
+}
+
+.settings-switch-row
+div > span {
+  margin-top: 3px;
+
+  color: var(--text-muted);
+
+  font-size: 0.7rem;
+}
+
+.settings-switch {
+  position: relative;
+
+  width: 53px;
+  height: 30px;
+
+  flex-shrink: 0;
+
+  border: 0;
+
+  border-radius: 30px;
+
+  background: #c7d0db;
+}
+
+.settings-switch > span {
+  position: absolute;
+
+  top: 4px;
+  left: 4px;
+
+  width: 22px;
+  height: 22px;
+
+  background: #ffffff;
+
+  border-radius: 50%;
+
+  transition:
+    transform
+    0.2s ease;
+}
+
+.settings-switch.enabled {
+  background: var(--navy);
+}
+
+.settings-switch.enabled
+> span {
+  transform:
+    translateX(23px);
+}
+
+/* ==========================================
+   DALTONISMO
+========================================== */
+
+.color-vision-card {
+  grid-column:
+    1 / -1;
+}
+
+.color-mode-options {
+  margin-top: 22px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 12px;
+}
+
+.color-mode-option {
+  min-height: 175px;
+
+  padding: 15px;
+
+  text-align: left;
+
+  border:
+    2px
+    solid
+    var(--border);
+
+  border-radius: 13px;
+
+  background: var(--surface);
+
+  color: var(--text);
+}
+
+.color-mode-option:hover {
+  border-color:
+    var(--yellow-dark);
+}
+
+.color-mode-option.selected {
+  border-color:
+    var(--navy);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      23,
+      41,
+      66,
+      0.09
+    );
+}
+
+.color-mode-top {
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    space-between;
+
+  gap: 10px;
+
+  margin-bottom: 13px;
+}
+
+.color-preview {
+  width: 82px;
+  height: 28px;
+
+  overflow: hidden;
+
+  display: flex;
+
+  border-radius: 7px;
+}
+
+.color-preview span {
+  flex: 1;
+}
+
+.color-preview-standard
+span:nth-child(1) {
+  background: #172942;
+}
+
+.color-preview-standard
+span:nth-child(2) {
+  background: #f4c84a;
+}
+
+.color-preview-standard
+span:nth-child(3) {
+  background: #315f5b;
+}
+
+.color-preview-protanopia
+span:nth-child(1) {
+  background: #124e78;
+}
+
+.color-preview-protanopia
+span:nth-child(2) {
+  background: #f2b134;
+}
+
+.color-preview-protanopia
+span:nth-child(3) {
+  background: #526d82;
+}
+
+.color-preview-deuteranopia
+span:nth-child(1) {
+  background: #164863;
+}
+
+.color-preview-deuteranopia
+span:nth-child(2) {
+  background: #f4a261;
+}
+
+.color-preview-deuteranopia
+span:nth-child(3) {
+  background: #3c7ea6;
+}
+
+.color-preview-tritanopia
+span:nth-child(1) {
+  background: #24355a;
+}
+
+.color-preview-tritanopia
+span:nth-child(2) {
+  background: #d35d8d;
+}
+
+.color-preview-tritanopia
+span:nth-child(3) {
+  background: #6b7280;
+}
+
+.color-selected-icon {
+  width: 28px;
+  height: 28px;
+
+  display: grid;
+
+  place-items: center;
+
+  background: var(--navy);
+
+  color: #ffffff;
+
+  border-radius: 50%;
+}
+
+.color-mode-option strong {
+  display: block;
+
+  color: var(--navy);
+
+  font-size: 0.84rem;
+}
+
+.color-mode-option p {
+  margin-top: 6px;
+
+  color: var(--text-secondary);
+
+  font-size: 0.72rem;
+
+  line-height: 1.45;
+}
+
+.selected-label {
+  margin-top: 10px;
+
+  display: inline-flex;
+
+  padding:
+    4px
+    8px;
+
+  background: var(--yellow-soft);
+
+  color: var(--navy);
+
+  border-radius: 6px;
+
+  font-size: 0.65rem;
+
+  font-weight: 800;
+}
+
+.color-accessibility-note {
+  margin-top: 16px;
+
+  padding: 14px;
+
+  background: var(--background);
+
+  border:
+    1px
+    solid
+    var(--border);
+
+  border-radius: 10px;
+}
+
+.color-accessibility-note strong {
+  color: var(--navy);
+}
+
+.color-accessibility-note p {
+  margin-top: 4px;
+
+  color: var(--text-secondary);
+
+  font-size: 0.72rem;
+
+  line-height: 1.5;
+}
+
+/* ==========================================
+   TECLADO
+========================================== */
+
+.keyboard-card {
+  grid-column:
+    1 / -1;
+}
+
+.keyboard-shortcuts {
+  margin-top: 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 10px;
+}
+
+.keyboard-shortcuts > div {
+  min-height: 84px;
+
+  padding: 13px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  flex-wrap: wrap;
+
+  background: var(--background);
+
+  border-radius: 10px;
+}
+
+.keyboard-shortcuts span {
+  color: var(--text-secondary);
+
+  font-size: 0.69rem;
+}
+
+kbd {
+  padding:
+    5px
+    8px;
+
+  background: var(--surface);
+
+  color: var(--navy);
+
+  border:
+    1px
+    solid
+    var(--border);
+
+  border-bottom:
+    3px
+    solid
+    #bdc6d1;
+
+  border-radius: 6px;
+
+  font-size: 0.7rem;
+
+  font-weight: 800;
+}
+
+/* ==========================================
+   MODO NOCHE
+========================================== */
+
+.app.theme-dark {
+  --navy: #e8eef7;
+
+  --navy-light: #c8d4e3;
+
+  --yellow: #f4c84a;
+
+  --yellow-dark: #f4c84a;
+
+  --yellow-soft: #3a331c;
+
+  --background: #0e1621;
+
+  --surface: #17212e;
+
+  --text: #edf2f7;
+
+  --text-secondary: #c0cad6;
+
+  --text-muted: #9aa8b8;
+
+  --border: #344253;
+
+  --green-soft: #203938;
+
+  --green-text: #b7dcda;
+}
+
+.app.theme-dark,
+.app.theme-dark
+.main-content {
+  background: var(--background);
+
+  color: var(--text);
+}
+
+.app.theme-dark
+.sidebar {
+  background: #101c2a;
+}
+
+.app.theme-dark
+.action-card,
+.app.theme-dark
+.selected-pdf,
+.app.theme-dark
+.reader-result,
+.app.theme-dark
+.ocr-card,
+.app.theme-dark
+.web-card,
+.app.theme-dark
+.voice-card,
+.app.theme-dark
+.selected-video-card,
+.app.theme-dark
+.caption-generator-card,
+.app.theme-dark
+.subtitle-list-card,
+.app.theme-dark
+.settings-card,
+.app.theme-dark
+.settings-status,
+.app.theme-dark
+.theme-option,
+.app.theme-dark
+.color-mode-option {
+  background: var(--surface);
+
+  border-color: var(--border);
+}
+
+.app.theme-dark
+.document-text,
+.app.theme-dark
+.caption-generator-card
+textarea {
+  background: #111b27;
+
+  color: var(--text);
+
+  border-color: var(--border);
+}
+
+.app.theme-dark
+.help-panel,
+.app.theme-dark
+.ocr-help-panel,
+.app.theme-dark
+.web-help-panel,
+.app.theme-dark
+.media-help-panel {
+  background: #211f17;
+
+  border-color: #51482b;
+}
+
+.app.theme-dark
+h1,
+.app.theme-dark
+h2,
+.app.theme-dark
+h3,
+.app.theme-dark
+strong {
+  color: var(--text);
+}
+
+.app.theme-dark
+p {
+  color: var(--text-secondary);
+}
+
+/* ==========================================
+   MODOS PARA DALTONISMO
+========================================== */
+
+.app.color-protanopia {
+  --navy: #124e78;
+
+  --navy-light: #1f638f;
+
+  --yellow: #f2b134;
+
+  --yellow-dark: #8b6415;
+
+  --yellow-soft: #fff1c7;
+
+  --green-soft: #e3edf4;
+
+  --green-text: #284f6a;
+}
+
+.app.color-deuteranopia {
+  --navy: #164863;
+
+  --navy-light: #24657f;
+
+  --yellow: #f4a261;
+
+  --yellow-dark: #905326;
+
+  --yellow-soft: #fff0df;
+
+  --green-soft: #e2eef5;
+
+  --green-text: #285a78;
+}
+
+.app.color-tritanopia {
+  --navy: #24355a;
+
+  --navy-light: #344972;
+
+  --yellow: #d35d8d;
+
+  --yellow-dark: #873854;
+
+  --yellow-soft: #fbe3ed;
+
+  --green-soft: #e8e9ed;
+
+  --green-text: #41495c;
+}
+
+/*
+   Cuando modo noche y daltonismo se usan juntos,
+   mantenemos los fondos oscuros y modificamos
+   principalmente los tonos de énfasis.
+*/
+
+.app.theme-dark.color-protanopia {
+  --navy: #d9ecf8;
+
+  --navy-light: #bcdcef;
+
+  --yellow: #f2b134;
+
+  --yellow-dark: #f2b134;
+
+  --yellow-soft: #3d3117;
+}
+
+.app.theme-dark.color-deuteranopia {
+  --navy: #d7eaf2;
+
+  --navy-light: #b9d9e6;
+
+  --yellow: #f4a261;
+
+  --yellow-dark: #f4a261;
+
+  --yellow-soft: #3c2a1c;
+}
+
+.app.theme-dark.color-tritanopia {
+  --navy: #e3e7f4;
+
+  --navy-light: #ccd3ea;
+
+  --yellow: #e275a0;
+
+  --yellow-dark: #e275a0;
+
+  --yellow-soft: #3d2430;
+}
+
+/* ==========================================
+   ALTO CONTRASTE
+========================================== */
+
+.high-contrast {
+  --background: #000000;
+
+  --surface: #000000;
+
+  --text: #ffffff;
+
+  --text-secondary: #ffffff;
+
+  --text-muted: #ffffff;
+
+  --navy: #ffffff;
+
+  --navy-light: #ffffff;
+
+  --yellow: #ffe600;
+
+  --yellow-dark: #ffe600;
+
+  --yellow-soft: #292500;
+
+  --border: #ffe600;
+}
+
+.high-contrast,
+.high-contrast
+.main-content {
+  background: #000000;
+
+  color: #ffffff;
+}
+
+.high-contrast
+.sidebar {
+  background: #000000;
+
+  border-right:
+    2px
+    solid
+    #ffe600;
+}
+
+.high-contrast
+.settings-card,
+.high-contrast
+.settings-status,
+.high-contrast
+.theme-option,
+.high-contrast
+.color-mode-option,
+.high-contrast
+.action-card,
+.high-contrast
+.reader-result,
+.high-contrast
+.selected-pdf,
+.high-contrast
+.selected-video-card,
+.high-contrast
+.caption-generator-card {
+  background: #000000;
+
+  color: #ffffff;
+
+  border-color: #ffe600;
+}
+
+.high-contrast
+button:focus-visible,
+.high-contrast
+a:focus-visible {
+  outline:
+    4px
+    solid
+    #ffe600;
+
+  outline-offset: 3px;
+}
+
+/* ==========================================
+   NO DEPENDER SOLAMENTE DEL COLOR
+========================================== */
+
+.success-message::before {
+  content: "✓";
+
+  flex-shrink: 0;
+
+  font-weight: 900;
+}
+
+.error-message::before {
+  content: "⚠";
+
+  flex-shrink: 0;
+
+  font-weight: 900;
+}
+
+/* ==========================================
+   MODO SIMPLIFICADO
+========================================== */
+
+.simplified-mode
+.logo-description,
+.simplified-mode
+.sidebar-brand-footer,
+.simplified-mode
+.welcome-label,
+.simplified-mode
+.card-number,
+.simplified-mode
+.voice-text p,
+.simplified-mode
+.help-panel,
+.simplified-mode
+.ocr-help-panel,
+.simplified-mode
+.web-help-panel,
+.simplified-mode
+.media-help-panel,
+.simplified-mode
+.prototype-notice {
+  display: none;
+}
+
+.simplified-mode
+.home-actions {
+  max-width: 760px;
+
+  grid-template-columns:
+    1fr;
+}
+
+.simplified-mode
+.web-card {
+  grid-column: auto;
+}
+
+.simplified-mode
+.action-card {
+  min-height: 200px;
+}
+
+.simplified-mode
+.card-content p {
+  font-size: 0.95rem;
+
+  line-height: 1.7;
+}
+
+.simplified-mode
+.menu-item {
+  min-height: 54px;
+
+  font-size: 0.94rem;
+}
+
+.simplified-mode
+.pdf-layout,
+.simplified-mode
+.ocr-layout,
+.simplified-mode
+.web-layout,
+.simplified-mode
+.media-layout {
+  grid-template-columns:
+    1fr;
+}
+
+/* ==========================================
+   FOCO DE TECLADO
+========================================== */
+
+.settings-page
+button:focus-visible {
+  outline:
+    4px
+    solid
+    var(--yellow);
+
+  outline-offset: 3px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (
+  max-width: 900px
+) {
+  .settings-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .appearance-card,
+  .color-vision-card,
+  .keyboard-card {
+    grid-column: auto;
+  }
+
+  .color-mode-options {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+
+  .keyboard-shortcuts {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+}
+
+@media (
+  max-width: 600px
+) {
+  .settings-header h1 {
+    font-size: 2.1rem;
+  }
+
+  .settings-status {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+  .reset-settings-button {
+    width: 100%;
+  }
+
+  .settings-card {
+    padding: 19px;
+  }
+
+  .theme-options,
+  .color-mode-options,
+  .keyboard-shortcuts {
+    grid-template-columns:
+      1fr;
+  }
+
+  .font-size-control {
+    grid-template-columns:
+      54px
+      1fr
+      54px;
+  }
+}

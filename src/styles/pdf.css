@@ -1,0 +1,512 @@
+/* ==========================================
+   PÁGINA PDF
+========================================== */
+
+.pdf-page {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+/* ==========================================
+   ENCABEZADO
+========================================== */
+
+.pdf-header {
+  max-width: 710px;
+  margin-bottom: 38px;
+}
+
+.pdf-header h1 {
+  color: var(--navy);
+
+  font-size: clamp(
+    2.2rem,
+    4vw,
+    3.4rem
+  );
+
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.pdf-header p {
+  max-width: 630px;
+
+  margin-top: 17px;
+
+  color: #68778b;
+
+  line-height: 1.65;
+}
+
+/* ==========================================
+   LAYOUT PRINCIPAL
+========================================== */
+
+.pdf-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    330px;
+
+  gap: 28px;
+
+  align-items: start;
+}
+
+.pdf-main-panel {
+  min-width: 0;
+}
+
+/* ==========================================
+   ZONA PARA SUBIR PDF
+========================================== */
+
+.pdf-drop-zone {
+  min-height: 370px;
+
+  padding: 45px 30px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  background: #ffffff;
+
+  border: 2px dashed #cbd4df;
+  border-radius: 20px;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.pdf-drop-zone:hover {
+  border-color: var(--yellow-dark);
+
+  background: #fffdf8;
+
+  box-shadow:
+    0 8px 24px
+    rgba(23, 41, 66, 0.04);
+}
+
+/* ICONO */
+
+.pdf-upload-icon {
+  width: 72px;
+  height: 72px;
+
+  margin-bottom: 20px;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--yellow-soft);
+
+  color: #9f7407;
+
+  border-radius: 19px;
+}
+
+/* TÍTULO */
+
+.pdf-drop-zone h2 {
+  color: var(--navy);
+
+  font-size: 1.3rem;
+  font-weight: 750;
+}
+
+/* DESCRIPCIÓN */
+
+.pdf-drop-zone p {
+  margin-top: 8px;
+
+  color: #728096;
+
+  font-size: 0.92rem;
+
+  line-height: 1.5;
+}
+
+/* BOTÓN SELECCIONAR */
+
+.select-file-button {
+  min-height: 48px;
+
+  margin-top: 24px;
+
+  padding: 0 21px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  border: 0;
+  border-radius: 11px;
+
+  background: var(--navy);
+
+  color: #ffffff;
+
+  font-weight: 700;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.select-file-button:hover {
+  background: var(--navy-light);
+
+  transform: translateY(-1px);
+}
+
+/* FORMATO */
+
+.pdf-drop-zone small {
+  margin-top: 15px;
+
+  color: #98a4b3;
+
+  font-size: 0.75rem;
+}
+
+/* ==========================================
+   ARCHIVO PDF SELECCIONADO
+========================================== */
+
+.selected-pdf {
+  padding: 25px;
+
+  background: #ffffff;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+
+  box-shadow:
+    0 6px 20px
+    rgba(23, 41, 66, 0.04);
+}
+
+.selected-pdf-top {
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+}
+
+/* ICONO DEL ARCHIVO */
+
+.selected-file-icon {
+  width: 57px;
+  height: 57px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--yellow-soft);
+
+  color: #9f7407;
+
+  border-radius: 14px;
+}
+
+/* DATOS DEL ARCHIVO */
+
+.selected-file-data {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.selected-file-data strong {
+  display: block;
+
+  color: var(--navy);
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 0.95rem;
+}
+
+.selected-file-data span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: var(--text-muted);
+
+  font-size: 0.8rem;
+}
+
+/* QUITAR ARCHIVO */
+
+.remove-file-button {
+  width: 43px;
+  height: 43px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #e0e5ec;
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #596a80;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.remove-file-button:hover {
+  background: #f3f5f8;
+
+  color: var(--navy);
+}
+
+.remove-file-button:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   BOTÓN PROCESAR
+========================================== */
+
+.process-pdf-button {
+  width: 100%;
+
+  min-height: 51px;
+
+  margin-top: 22px;
+
+  border: 0;
+  border-radius: 11px;
+
+  background: var(--navy);
+
+  color: #ffffff;
+
+  font-weight: 700;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.process-pdf-button:hover {
+  background: var(--navy-light);
+
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+   PROCESANDO
+========================================== */
+
+.processing-box {
+  margin-top: 23px;
+
+  padding: 18px;
+
+  background: #f6f8fa;
+
+  border-radius: 13px;
+}
+
+.processing-info {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.processing-info > div {
+  flex: 1;
+}
+
+.processing-info strong {
+  display: block;
+
+  color: var(--navy);
+
+  font-size: 0.9rem;
+}
+
+.processing-info p {
+  margin-top: 3px;
+
+  color: #758498;
+
+  font-size: 0.8rem;
+}
+
+.progress-number {
+  color: var(--navy);
+
+  font-size: 0.85rem;
+  font-weight: 750;
+}
+
+/* ==========================================
+   PANEL ¿CÓMO FUNCIONA?
+========================================== */
+
+.help-panel {
+  position: sticky;
+
+  top: 28px;
+
+  width: 100%;
+
+  padding: 28px 26px;
+
+  background: #fffaf0;
+
+  border: 1px solid #ead9a4;
+  border-radius: 18px;
+
+  box-shadow:
+    0 8px 24px
+    rgba(23, 41, 66, 0.06);
+}
+
+/* NÚMERO 01 */
+
+.help-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 32px;
+  height: 24px;
+
+  margin-bottom: 8px;
+
+  color: #8b6b09;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  letter-spacing: 0.12em;
+}
+
+/* TÍTULO */
+
+.help-panel h2 {
+  margin-bottom: 26px;
+
+  color: var(--navy);
+
+  font-size: 1.35rem;
+  font-weight: 750;
+
+  line-height: 1.2;
+}
+
+/* ==========================================
+   PASOS
+========================================== */
+
+.help-step {
+  display: grid;
+
+  grid-template-columns:
+    38px
+    minmax(0, 1fr);
+
+  gap: 12px;
+
+  align-items: start;
+
+  margin-bottom: 24px;
+}
+
+/* CÍRCULO */
+
+.help-step > span {
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--yellow);
+
+  color: var(--navy);
+
+  border-radius: 50%;
+
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+/* INFORMACIÓN DEL PASO */
+
+.help-step strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: var(--navy);
+
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+
+.help-step p {
+  color: #6f6548;
+
+  font-size: 0.8rem;
+
+  line-height: 1.55;
+}
+
+/* ==========================================
+   PRIVACIDAD
+========================================== */
+
+.privacy-message {
+  margin-top: 8px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid #ddce9d;
+}
+
+.privacy-message strong {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: var(--navy);
+
+  font-size: 0.85rem;
+  font-weight: 750;
+}
+
+.privacy-message p {
+  color: #6f6548;
+
+  font-size: 0.78rem;
+
+  line-height: 1.55;
+}
