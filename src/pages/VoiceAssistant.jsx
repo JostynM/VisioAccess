@@ -10,7 +10,6 @@ import {
   Mic,
   MicOff,
   Navigation,
-  RotateCcw,
   Square,
 } from "lucide-react";
 
@@ -46,11 +45,6 @@ function VoiceAssistant({
   ] = useState(false);
 
   const [
-    transcript,
-    setTranscript,
-  ] = useState("");
-
-  const [
     interimTranscript,
     setInterimTranscript,
   ] = useState("");
@@ -64,11 +58,6 @@ function VoiceAssistant({
     recognitionError,
     setRecognitionError,
   ] = useState("");
-
-  const [
-    mode,
-    setMode,
-  ] = useState("commands");
 
   /*
    * ========================================
@@ -111,7 +100,6 @@ function VoiceAssistant({
     }
 
     setIsListening(false);
-
     setInterimTranscript("");
   };
 
@@ -368,7 +356,7 @@ function VoiceAssistant({
         "quitar contraste",
       ) ||
       command.includes(
-        "modo normal",
+        "contraste normal",
       )
     ) {
       if (highContrast) {
@@ -482,11 +470,6 @@ function VoiceAssistant({
     recognition.lang =
       "es-PE";
 
-    /*
-     * Una frase por activación.
-     * Es más estable para el prototipo.
-     */
-
     recognition.continuous =
       false;
 
@@ -498,16 +481,9 @@ function VoiceAssistant({
 
     recognition.onstart = () => {
       setIsListening(true);
-
       setRecognitionError("");
-
       setInterimTranscript("");
-
-      if (
-        mode === "commands"
-      ) {
-        setLastCommand("");
-      }
+      setLastCommand("");
     };
 
     recognition.onresult = (
@@ -543,38 +519,18 @@ function VoiceAssistant({
       );
 
       if (
-        !finalText.trim()
-      ) {
-        return;
-      }
-
-      if (
-        mode === "commands"
+        finalText.trim()
       ) {
         executeVoiceCommand(
           finalText,
         );
-
-        return;
       }
-
-      setTranscript(
-        (current) => {
-          const separator =
-            current.trim()
-              ? " "
-              : "";
-
-          return `${current}${separator}${finalText.trim()}`;
-        },
-      );
     };
 
     recognition.onerror = (
       event,
     ) => {
       setIsListening(false);
-
       setInterimTranscript("");
 
       if (
@@ -593,7 +549,7 @@ function VoiceAssistant({
         "no-speech"
       ) {
         setRecognitionError(
-          "No se detectó voz. Intenta hablar nuevamente.",
+          "No se detectó voz. Intenta decir un comando nuevamente.",
         );
 
         return;
@@ -607,14 +563,13 @@ function VoiceAssistant({
       }
 
       setRecognitionError(
-        "No fue posible reconocer la voz. Intenta nuevamente.",
+        "No fue posible reconocer el comando. Intenta nuevamente.",
       );
     };
 
     recognition.onend =
       () => {
         setIsListening(false);
-
         setInterimTranscript(
           "",
         );
@@ -632,38 +587,6 @@ function VoiceAssistant({
 
       setIsListening(false);
     }
-  };
-
-  /*
-   * ========================================
-   * CAMBIAR ENTRE MODOS
-   * ========================================
-   */
-
-  const changeMode = (
-    newMode,
-  ) => {
-    stopListening();
-
-    setMode(newMode);
-
-    setRecognitionError("");
-
-    setInterimTranscript("");
-
-    setLastCommand("");
-  };
-
-  /*
-   * ========================================
-   * LIMPIAR DICTADO
-   * ========================================
-   */
-
-  const clearTranscript = () => {
-    stopListening();
-
-    setTranscript("");
   };
 
   return (
@@ -693,55 +616,14 @@ function VoiceAssistant({
         </h1>
 
         <p>
-          Utiliza comandos de voz para
-          navegar por la aplicación y
-          ajustar opciones de
-          accesibilidad sin depender del
-          mouse. También puedes usar el
-          dictado cuando necesites
-          escribir sin teclado.
+          Navega por la aplicación y
+          modifica opciones de
+          accesibilidad mediante comandos
+          hablados, reduciendo la necesidad
+          de localizar controles
+          visualmente.
         </p>
       </header>
-
-      <div className="voice-mode-tabs">
-        <button
-          type="button"
-          className={
-            mode === "commands"
-              ? "active"
-              : ""
-          }
-          onClick={() =>
-            changeMode(
-              "commands",
-            )
-          }
-        >
-          <Navigation
-            size={19}
-          />
-
-          Comandos de voz
-        </button>
-
-        <button
-          type="button"
-          className={
-            mode === "dictation"
-              ? "active"
-              : ""
-          }
-          onClick={() =>
-            changeMode(
-              "dictation",
-            )
-          }
-        >
-          <Mic size={19} />
-
-          Dictado por voz
-        </button>
-      </div>
 
       {!recognitionSupported && (
         <div
@@ -782,416 +664,208 @@ function VoiceAssistant({
         </div>
       )}
 
-      {mode ===
-        "dictation" && (
-        <div className="voice-layout">
-          <div className="voice-main-card">
-            <div className="voice-card-heading">
-              <div className="voice-feature-icon">
-                <Mic size={27} />
-              </div>
-
-              <div>
-                <span className="section-label">
-                  DICTADO POR VOZ
-                </span>
-
-                <h2>
-                  Escribe sin utilizar
-                  el teclado
-                </h2>
-
-                <p>
-                  Función complementaria
-                  para usuarios que
-                  presentan dificultades
-                  motoras o prefieren
-                  dictar el contenido.
-                </p>
-              </div>
+      <div className="commands-layout">
+        <div className="command-list-card">
+          <div className="voice-card-heading">
+            <div className="voice-feature-icon">
+              <Navigation
+                size={27}
+              />
             </div>
 
-            <div
-              className={`microphone-area ${
-                isListening
-                  ? "listening"
-                  : ""
-              }`}
-            >
-              <button
-                type="button"
-                className="microphone-button"
-                onClick={
-                  isListening
-                    ? stopListening
-                    : startListening
-                }
-                disabled={
-                  !recognitionSupported
-                }
-                aria-label={
-                  isListening
-                    ? "Detener micrófono"
-                    : "Activar micrófono"
-                }
-              >
-                {isListening ? (
-                  <Square
-                    size={29}
-                  />
-                ) : (
-                  <Mic
-                    size={35}
-                  />
-                )}
-              </button>
+            <div>
+              <span className="section-label">
+                NAVEGACIÓN POR VOZ
+              </span>
 
+              <h2>
+                Di un comando
+              </h2>
+
+              <p>
+                Utiliza instrucciones
+                sencillas para navegar o
+                modificar la
+                visualización de
+                VisioAccess.
+              </p>
+            </div>
+          </div>
+
+          <div
+            className={`command-microphone ${
+              isListening
+                ? "listening"
+                : ""
+            }`}
+          >
+            <button
+              type="button"
+              className="microphone-button"
+              onClick={
+                isListening
+                  ? stopListening
+                  : startListening
+              }
+              disabled={
+                !recognitionSupported
+              }
+              aria-label={
+                isListening
+                  ? "Detener escucha"
+                  : "Escuchar comando"
+              }
+            >
+              {isListening ? (
+                <Square
+                  size={26}
+                />
+              ) : (
+                <Mic
+                  size={30}
+                />
+              )}
+            </button>
+
+            <div>
               <strong>
                 {isListening
-                  ? "Te estamos escuchando"
-                  : "Pulsa para hablar"}
+                  ? "Escuchando comando..."
+                  : "Pulsa y di un comando"}
               </strong>
 
               <p>
-                {isListening
-                  ? "Habla con claridad. VisioAccess mostrará tus palabras en pantalla."
-                  : "Al utilizarlo por primera vez, el navegador solicitará permiso para acceder al micrófono."}
+                Por ejemplo:
+                “Documentos”,
+                “Aumentar texto” o
+                “Modo noche”.
               </p>
-
-              {interimTranscript && (
-                <div
-                  className="interim-text"
-                  aria-live="polite"
-                >
-                  {
-                    interimTranscript
-                  }
-                </div>
-              )}
             </div>
+          </div>
 
-            <div className="voice-transcript-header">
-              <div>
-                <label
-                  htmlFor="voice-transcript"
-                >
-                  Texto reconocido
-                </label>
-
-                <span>
-                  Puedes editar el
-                  resultado manualmente.
-                </span>
-              </div>
-
-              <span>
+          {interimTranscript && (
+            <div className="command-heard">
+              Escuchando:{" "}
+              <strong>
                 {
-                  transcript.length
-                }{" "}
-                caracteres
-              </span>
+                  interimTranscript
+                }
+              </strong>
             </div>
+          )}
 
-            <textarea
-              id="voice-transcript"
-              value={transcript}
-              onChange={(event) =>
-                setTranscript(
-                  event.target.value,
-                )
-              }
-              placeholder="Lo que digas aparecerá aquí..."
-              rows={10}
-            />
-
-            <button
-              type="button"
-              className="clear-voice-button"
-              onClick={
-                clearTranscript
-              }
-              disabled={
-                !transcript
-              }
+          {lastCommand && (
+            <div
+              className="command-result"
+              aria-live="polite"
             >
-              <RotateCcw
-                size={18}
+              <CheckCircle2
+                size={20}
               />
 
-              Limpiar texto
-            </button>
-          </div>
+              {
+                lastCommand
+              }
+            </div>
+          )}
 
-          <aside className="voice-help-card">
-            <span className="help-number">
-              04
-            </span>
+          <div className="commands-grid">
+            <div className="command-group">
+              <h3>
+                Navegación
+              </h3>
 
-            <h2>
-              ¿Cómo funciona?
-            </h2>
-
-            <div className="voice-help-step">
               <span>
-                1
+                “Inicio”
               </span>
 
-              <div>
-                <strong>
-                  Activa el micrófono
-                </strong>
-
-                <p>
-                  Pulsa el botón central
-                  y concede el permiso.
-                </p>
-              </div>
-            </div>
-
-            <div className="voice-help-step">
               <span>
-                2
+                “Documentos”
               </span>
 
-              <div>
-                <strong>
-                  Habla normalmente
-                </strong>
-
-                <p>
-                  VisioAccess reconocerá
-                  lo que digas.
-                </p>
-              </div>
-            </div>
-
-            <div className="voice-help-step">
               <span>
-                3
+                “Imágenes”
               </span>
 
-              <div>
-                <strong>
-                  Revisa el texto
-                </strong>
+              <span>
+                “Páginas web”
+              </span>
 
-                <p>
-                  Puedes corregirlo o
-                  continuar dictando.
-                </p>
-              </div>
-            </div>
-          </aside>
-        </div>
-      )}
+              <span>
+                “Multimedia”
+              </span>
 
-      {mode ===
-        "commands" && (
-        <div className="commands-layout">
-          <div className="command-list-card">
-            <div className="voice-card-heading">
-              <div className="voice-feature-icon">
-                <Navigation
-                  size={27}
-                />
-              </div>
-
-              <div>
-                <span className="section-label">
-                  NAVEGACIÓN POR VOZ
-                </span>
-
-                <h2>
-                  Controla VisioAccess
-                  hablando
-                </h2>
-
-                <p>
-                  Utiliza comandos
-                  sencillos para
-                  navegar o modificar
-                  opciones de
-                  accesibilidad.
-                </p>
-              </div>
+              <span>
+                “Accesibilidad”
+              </span>
             </div>
 
-            <div
-              className={`command-microphone ${
-                isListening
-                  ? "listening"
-                  : ""
-              }`}
-            >
-              <button
-                type="button"
-                className="microphone-button"
-                onClick={
-                  isListening
-                    ? stopListening
-                    : startListening
-                }
-                disabled={
-                  !recognitionSupported
-                }
-                aria-label={
-                  isListening
-                    ? "Detener escucha"
-                    : "Escuchar comando"
-                }
-              >
-                {isListening ? (
-                  <Square
-                    size={26}
-                  />
-                ) : (
-                  <Mic
-                    size={30}
-                  />
-                )}
-              </button>
+            <div className="command-group">
+              <h3>
+                Visualización
+              </h3>
 
-              <div>
-                <strong>
-                  {isListening
-                    ? "Escuchando comando..."
-                    : "Pulsa y di un comando"}
-                </strong>
+              <span>
+                “Aumentar texto”
+              </span>
 
-                <p>
-                  Por ejemplo:
-                  “Documentos”,
-                  “Aumentar texto” o
-                  “Modo noche”.
-                </p>
-              </div>
+              <span>
+                “Reducir texto”
+              </span>
+
+              <span>
+                “Modo día”
+              </span>
+
+              <span>
+                “Modo noche”
+              </span>
+
+              <span>
+                “Activar contraste”
+              </span>
+
+              <span>
+                “Desactivar contraste”
+              </span>
             </div>
 
-            {interimTranscript && (
-              <div className="command-heard">
-                Escuchando:{" "}
-                <strong>
-                  {
-                    interimTranscript
-                  }
-                </strong>
-              </div>
-            )}
+            <div className="command-group">
+              <h3>
+                Interfaz
+              </h3>
 
-            {lastCommand && (
-              <div
-                className="command-result"
-                aria-live="polite"
-              >
-                <CheckCircle2
-                  size={20}
-                />
+              <span>
+                “Activar modo
+                simplificado”
+              </span>
 
-                {
-                  lastCommand
-                }
-              </div>
-            )}
-
-            <div className="commands-grid">
-              <div className="command-group">
-                <h3>
-                  Navegación
-                </h3>
-
-                <span>
-                  “Inicio”
-                </span>
-
-                <span>
-                  “Documentos”
-                </span>
-
-                <span>
-                  “Imágenes”
-                </span>
-
-                <span>
-                  “Páginas web”
-                </span>
-
-                <span>
-                  “Multimedia”
-                </span>
-
-                <span>
-                  “Accesibilidad”
-                </span>
-              </div>
-
-              <div className="command-group">
-                <h3>
-                  Visualización
-                </h3>
-
-                <span>
-                  “Aumentar texto”
-                </span>
-
-                <span>
-                  “Reducir texto”
-                </span>
-
-                <span>
-                  “Modo día”
-                </span>
-
-                <span>
-                  “Modo noche”
-                </span>
-
-                <span>
-                  “Activar contraste”
-                </span>
-
-                <span>
-                  “Desactivar contraste”
-                </span>
-              </div>
-
-              <div className="command-group">
-                <h3>
-                  Interfaz
-                </h3>
-
-                <span>
-                  “Activar modo
-                  simplificado”
-                </span>
-
-                <span>
-                  “Desactivar modo
-                  simplificado”
-                </span>
-              </div>
+              <span>
+                “Desactivar modo
+                simplificado”
+              </span>
             </div>
           </div>
-
-          <aside className="command-info-card">
-            <Keyboard
-              size={27}
-            />
-
-            <h2>
-              No reemplaza otros
-              controles
-            </h2>
-
-            <p>
-              La navegación por voz es
-              una opción adicional.
-              VisioAccess también puede
-              utilizarse mediante mouse,
-              teclado o pantalla táctil.
-            </p>
-          </aside>
         </div>
-      )}
+
+        <aside className="command-info-card">
+          <Keyboard
+            size={27}
+          />
+
+          <h2>
+            Una alternativa de navegación
+          </h2>
+
+          <p>
+            Los comandos de voz reducen la
+            necesidad de localizar botones
+            visualmente. VisioAccess también
+            puede utilizarse mediante mouse,
+            teclado o pantalla táctil.
+          </p>
+        </aside>
+      </div>
     </section>
   );
 }
