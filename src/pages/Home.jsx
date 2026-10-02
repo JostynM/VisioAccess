@@ -149,9 +149,9 @@ function Home({
           </strong>
 
           <p>
-            Dicta texto o controla
-            VisioAccess mediante comandos
-            de voz.
+            Navega y ajusta la
+            accesibilidad mediante
+            comandos de voz.
           </p>
         </div>
 
