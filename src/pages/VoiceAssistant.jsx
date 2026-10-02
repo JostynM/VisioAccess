@@ -25,6 +25,8 @@ function VoiceAssistant({
   decreaseFont,
   toggleContrast,
   highContrast,
+  themeMode,
+  changeThemeMode,
   simplifiedMode,
   toggleSimplifiedMode,
 }) {
@@ -66,7 +68,7 @@ function VoiceAssistant({
   const [
     mode,
     setMode,
-  ] = useState("dictation");
+  ] = useState("commands");
 
   /*
    * ========================================
@@ -203,6 +205,25 @@ function VoiceAssistant({
 
     if (
       command.includes(
+        "multimedia",
+      ) ||
+      command.includes(
+        "video",
+      )
+    ) {
+      setLastCommand(
+        'Comando ejecutado: "Multimedia"',
+      );
+
+      navigate(
+        "/multimedia",
+      );
+
+      return;
+    }
+
+    if (
+      command.includes(
         "accesibilidad",
       ) ||
       command.includes(
@@ -218,6 +239,68 @@ function VoiceAssistant({
 
       navigate(
         "/accesibilidad",
+      );
+
+      return;
+    }
+
+    /*
+     * APARIENCIA
+     */
+
+    if (
+      command.includes(
+        "modo noche",
+      ) ||
+      command.includes(
+        "tema oscuro",
+      ) ||
+      command.includes(
+        "activar modo noche",
+      )
+    ) {
+      if (
+        themeMode !== "dark"
+      ) {
+        changeThemeMode(
+          "dark",
+        );
+      }
+
+      setLastCommand(
+        'Comando ejecutado: "Modo noche"',
+      );
+
+      return;
+    }
+
+    if (
+      command.includes(
+        "modo dia",
+      ) ||
+      command.includes(
+        "modo día",
+      ) ||
+      command.includes(
+        "tema claro",
+      ) ||
+      command.includes(
+        "activar modo dia",
+      ) ||
+      command.includes(
+        "activar modo día",
+      )
+    ) {
+      if (
+        themeMode !== "light"
+      ) {
+        changeThemeMode(
+          "light",
+        );
+      }
+
+      setLastCommand(
+        'Comando ejecutado: "Modo día"',
       );
 
       return;
@@ -606,37 +689,21 @@ function VoiceAssistant({
         </span>
 
         <h1>
-          Usa VisioAccess con tu voz
+          Controla VisioAccess con tu voz
         </h1>
 
         <p>
-          Habla para convertir tu voz
-          en texto o utiliza comandos
-          sencillos para navegar por la
-          aplicación sin depender del
-          mouse.
+          Utiliza comandos de voz para
+          navegar por la aplicación y
+          ajustar opciones de
+          accesibilidad sin depender del
+          mouse. También puedes usar el
+          dictado cuando necesites
+          escribir sin teclado.
         </p>
       </header>
 
       <div className="voice-mode-tabs">
-        <button
-          type="button"
-          className={
-            mode === "dictation"
-              ? "active"
-              : ""
-          }
-          onClick={() =>
-            changeMode(
-              "dictation",
-            )
-          }
-        >
-          <Mic size={19} />
-
-          Voz a texto
-        </button>
-
         <button
           type="button"
           className={
@@ -655,6 +722,24 @@ function VoiceAssistant({
           />
 
           Comandos de voz
+        </button>
+
+        <button
+          type="button"
+          className={
+            mode === "dictation"
+              ? "active"
+              : ""
+          }
+          onClick={() =>
+            changeMode(
+              "dictation",
+            )
+          }
+        >
+          <Mic size={19} />
+
+          Dictado por voz
         </button>
       </div>
 
@@ -708,18 +793,20 @@ function VoiceAssistant({
 
               <div>
                 <span className="section-label">
-                  VOZ A TEXTO
+                  DICTADO POR VOZ
                 </span>
 
                 <h2>
-                  Habla en lugar de
-                  escribir
+                  Escribe sin utilizar
+                  el teclado
                 </h2>
 
                 <p>
-                  Útil para usuarios que
+                  Función complementaria
+                  para usuarios que
                   presentan dificultades
-                  para utilizar un teclado.
+                  motoras o prefieren
+                  dictar el contenido.
                 </p>
               </div>
             </div>
@@ -973,8 +1060,9 @@ function VoiceAssistant({
 
                 <p>
                   Por ejemplo:
-                  “Documentos” o
-                  “Aumentar texto”.
+                  “Documentos”,
+                  “Aumentar texto” o
+                  “Modo noche”.
                 </p>
               </div>
             </div>
@@ -1028,6 +1116,10 @@ function VoiceAssistant({
                 </span>
 
                 <span>
+                  “Multimedia”
+                </span>
+
+                <span>
                   “Accesibilidad”
                 </span>
               </div>
@@ -1043,6 +1135,14 @@ function VoiceAssistant({
 
                 <span>
                   “Reducir texto”
+                </span>
+
+                <span>
+                  “Modo día”
+                </span>
+
+                <span>
+                  “Modo noche”
                 </span>
 
                 <span>
