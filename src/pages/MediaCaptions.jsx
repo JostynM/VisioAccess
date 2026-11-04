@@ -14,13 +14,17 @@ export default function MediaCaptions(props) {
     const media = mediaRef.current;
     if (!media || !file?.type.startsWith('video/')) return;
     if (trackRef.current?.media !== media) {
-      trackRef.current = { media, track: media.addTextTrack('captions', 'Subtítulos') };
+      trackRef.current = { media, track: media.addTextTrack('captions', 'Subtítulos'), cues: [] };
     }
-    const track = trackRef.current.track;
-    const clear = () => { for (const cue of [...(track.cues || [])]) track.removeCue(cue); };
+    const entry = trackRef.current;
+    const track = entry.track;
+    const clear = () => { for (const cue of entry.cues) track.removeCue(cue); entry.cues = []; };
     clear();
     try {
-      for (const cue of validateCues(cues, duration)) track.addCue(new VTTCue(cue.start, cue.end, cue.text));
+      for (const cue of validateCues(cues, duration)) {
+        const nativeCue = new VTTCue(cue.start, cue.end, cue.text);
+        track.addCue(nativeCue); entry.cues.push(nativeCue);
+      }
     } catch { /* Invalid edits are not displayed until corrected. */ }
     track.mode = visible ? 'showing' : 'disabled';
     return () => { clear(); track.mode = 'disabled'; };
