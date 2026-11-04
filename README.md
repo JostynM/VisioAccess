@@ -4,7 +4,7 @@ Lector accesible con React, Vite y una API Node.js/Express para extraer texto de
 
 ## Desarrollo local
 
-Requiere Node.js 24 o superior.
+Requiere Node.js 24.x.
 
 ```bash
 npm ci
@@ -17,7 +17,7 @@ En otra terminal:
 npm run dev
 ```
 
-Vite envía `/api` al backend en `127.0.0.1:3001`. Abre la dirección que muestra Vite y entra a Páginas web. Pega una URL pública y pulsa Adaptar página. Los botones de ejemplo siguen siendo demostraciones explícitas; una URL enviada en el formulario se descarga realmente.
+Vite envía `/api` al backend en `127.0.0.1:3001`. Abre la dirección que muestra Vite y entra a Páginas web. Pega una URL pública y pulsa Adaptar página. Los botones de páginas sugeridas y el formulario descargan el contenido real del sitio.
 
 `PORT` y `HOST` configuran el servidor independiente. El host predeterminado es loopback; en un contenedor usa `HOST=0.0.0.0` y un proxy HTTPS delante del servicio. No configures confianza indiscriminada en cabeceras de proxy.
 
@@ -36,7 +36,7 @@ Solo HTTP/HTTPS, sin credenciales ni puertos especiales. Se valida la resolució
 
 Se permiten 20 consultas por minuto por IP y proceso. En despliegues con varias instancias, aplica también un límite distribuido o reglas del proveedor: el contador en memoria no es global. Una política de salida de red que bloquee destinos internos es una defensa adicional recomendada para producción.
 
-Solo se extrae el HTML público recibido. No se inicia sesión, no se evitan bloqueos del sitio y no se ejecuta JavaScript remoto. Sitios que requieren esas funciones pueden no producir contenido. El lector manual continúa disponible. No se realiza transcripción automática de multimedia.
+Solo se extrae el HTML público recibido. No se inicia sesión, no se evitan bloqueos del sitio y no se ejecuta JavaScript remoto. Sitios que requieren esas funciones pueden no producir contenido. El lector manual continúa disponible. Multimedia permite transcripción local con Whisper Tiny de hasta 2 minutos (descarga inicial de unos 75 MB), edición e importación/exportación SRT/VTT. El audio no se envía al backend. Revisa el resultado: no se garantiza exactitud automática.
 
 ## Vercel
 

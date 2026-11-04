@@ -1,6 +1,8 @@
 import {
   useEffect,
   useState,
+  lazy,
+  Suspense,
 } from "react";
 
 import {
@@ -13,43 +15,68 @@ import Sidebar from "./components/Sidebar";
 import MobileHeader from "./components/MobileHeader";
 
 import Home from "./pages/Home";
-import PdfReader from "./pages/PdfReader";
-import ImageReader from "./pages/ImageReader";
-import WebReader from "./pages/WebReader";
-import VoiceAssistant from "./pages/VoiceAssistant";
-import MediaCaptions from "./pages/MediaCaptions";
-import AccessibilitySettings from "./pages/AccessibilitySettings";
+const PdfReader = lazy(() => import("./pages/PdfReader"));
+const ImageReader = lazy(() => import("./pages/ImageReader"));
+const WebReader = lazy(() => import("./pages/WebReader"));
+const VoiceAssistant = lazy(() => import("./pages/VoiceAssistant"));
+const MediaCaptions = lazy(() => import("./pages/MediaCaptions"));
+const AccessibilitySettings = lazy(() => import("./pages/AccessibilitySettings"));
+
+import { loadPreferences } from "./utils/preferences";
+import RouteFocus from "./components/RouteFocus";
 
 function App() {
+  const [initialPreferences] = useState(loadPreferences);
   const [
     fontScale,
     setFontScale,
-  ] = useState(1);
+  ] = useState(initialPreferences.fontScale);
 
   const [
     themeMode,
     setThemeMode,
-  ] = useState("light");
+  ] = useState(initialPreferences.themeMode);
 
   const [
     highContrast,
     setHighContrast,
-  ] = useState(false);
+  ] = useState(initialPreferences.highContrast);
 
   const [
     simplifiedMode,
     setSimplifiedMode,
-  ] = useState(false);
+  ] = useState(initialPreferences.simplifiedMode);
 
   const [
     colorVisionMode,
     setColorVisionMode,
-  ] = useState("standard");
+  ] = useState(initialPreferences.colorVisionMode);
 
   const [
     mobileMenuOpen,
     setMobileMenuOpen,
   ] = useState(false);
+
+  useEffect(() => {
+    try { localStorage.setItem('visioaccess.preferences', JSON.stringify({ fontScale, themeMode, highContrast, simplifiedMode, colorVisionMode })); } catch { /* Storage may be disabled. */ }
+  }, [fontScale, themeMode, highContrast, simplifiedMode, colorVisionMode]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const sidebar = document.getElementById('main-sidebar');
+    const previous = document.activeElement;
+    const controls = () => [...sidebar.querySelectorAll('button,a[href]')].filter(el => el.getClientRects().length);
+    controls()[0]?.focus();
+    const trap = event => {
+      if (event.key !== 'Tab') return;
+      const items = controls();
+      const first = items[0], last = items.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener('keydown', trap);
+    return () => { document.removeEventListener('keydown', trap); previous?.focus(); };
+  }, [mobileMenuOpen]);
 
   /*
    * ========================================
@@ -242,6 +269,8 @@ function App() {
 
   return (
     <BrowserRouter>
+      <RouteFocus />
+      <a className="skip-link" href="#main-content">Saltar al contenido</a>
       <div
         className={[
           "app",
@@ -293,7 +322,8 @@ function App() {
           />
         )}
 
-        <main className="main-content">
+        <main id="main-content" tabIndex={-1} inert={mobileMenuOpen} className="main-content">
+          <Suspense fallback={<p role="status">Cargando herramienta...</p>}>
           <Routes>
             <Route
               path="/"
@@ -357,7 +387,9 @@ function App() {
                 />
               }
             />
+            <Route path="*" element={<section><h1>Página no encontrada</h1><a href="/">Volver al inicio</a></section>} />
           </Routes>
+          </Suspense>
         </main>
       </div>
     </BrowserRouter>

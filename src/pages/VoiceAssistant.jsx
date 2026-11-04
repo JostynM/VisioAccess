@@ -30,6 +30,7 @@ function VoiceAssistant({
   toggleSimplifiedMode,
 }) {
   const navigate = useNavigate();
+  const [typedCommand, setTypedCommand] = useState("");
 
   const recognitionRef =
     useRef(null);
@@ -37,7 +38,7 @@ function VoiceAssistant({
   const [
     recognitionSupported,
     setRecognitionSupported,
-  ] = useState(true);
+  ] = useState(() => Boolean(window.SpeechRecognition || window.webkitSpeechRecognition));
 
   const [
     isListening,
@@ -66,14 +67,6 @@ function VoiceAssistant({
    */
 
   useEffect(() => {
-    const SpeechRecognition =
-      window.SpeechRecognition ||
-      window.webkitSpeechRecognition;
-
-    setRecognitionSupported(
-      Boolean(SpeechRecognition),
-    );
-
     return () => {
       try {
         recognitionRef.current?.abort();
@@ -664,6 +657,11 @@ function VoiceAssistant({
         </div>
       )}
 
+      <form className="command-list-card" onSubmit={event => { event.preventDefault(); if (typedCommand.trim()) executeVoiceCommand(typedCommand); }}>
+        <label htmlFor="typed-command">También puedes escribir un comando</label>
+        <input id="typed-command" value={typedCommand} onChange={event => setTypedCommand(event.target.value)} placeholder="Por ejemplo: Documentos" maxLength={100} />
+        <button type="submit" className="secondary-button">Ejecutar comando</button>
+      </form>
       <div className="commands-layout">
         <div className="command-list-card">
           <div className="voice-card-heading">

@@ -139,7 +139,7 @@ function getScale(image) {
       largestSide;
   }
 
-  return Math.max(scale, 1);
+  return scale;
 }
 
 export async function preprocessImage(file) {
@@ -318,7 +318,7 @@ export async function preprocessImage(file) {
 
   const threshold =
     calculateOtsuThreshold(
-      Array.from(grayValues),
+      grayValues,
     );
 
   const binaryCanvas =
