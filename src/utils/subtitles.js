@@ -35,7 +35,7 @@ export function parseSubtitles(value) {
 }
 export function serializeSubtitles(cues, type = 'vtt') {
   const safe = validateCues(cues);
-  return (type==='vtt'?'WEBVTT\n\n':'') + safe.map((c,i)=>`${i+1}\n${timestamp(c.start,type==='srt'?',':'.')} --> ${timestamp(c.end,type==='srt'?',':'.')}\n${c.text.replace(/-->/g,'→')}\n`).join('\n');
+  return (type==='vtt'?'WEBVTT\n\n':'') + safe.map((c,i)=>`${i+1}\n${timestamp(c.start,type==='srt'?',':'.')} --> ${timestamp(c.end,type==='srt'?',':'.')}\n${c.text.replace(/-->/g,'→')}\n`).join('\n') + '\n';
 }
 export function draftSubtitles(text, duration) {
   if (!Number.isFinite(duration) || duration <= 0) throw new Error('Espera a que se cargue la duración del archivo.');

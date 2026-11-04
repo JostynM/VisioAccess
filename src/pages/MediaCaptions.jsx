@@ -4,7 +4,7 @@ import AccessibilityBar from '../components/AccessibilityBar';
 import { draftSubtitles, parseSubtitles, serializeSubtitles, validateCues } from '../utils/subtitles';
 
 export default function MediaCaptions(props) {
-  const inputRef = useRef(null), subtitleRef = useRef(null), mediaRef = useRef(null), workerRef = useRef(null), timerRef = useRef(null), operation = useRef(0);
+  const inputRef = useRef(null), subtitleRef = useRef(null), mediaRef = useRef(null), workerRef = useRef(null), timerRef = useRef(null), trackRef = useRef(null), operation = useRef(0);
   const [file,setFile]=useState(null), [url,setUrl]=useState(''), [duration,setDuration]=useState(0);
   const [transcript,setTranscript]=useState(''), [cues,setCues]=useState([]), [visible,setVisible]=useState(true), [time,setTime]=useState(0);
   const [error,setError]=useState(''), [status,setStatus]=useState(''), [busy,setBusy]=useState(false), [language,setLanguage]=useState('spanish');
@@ -12,18 +12,19 @@ export default function MediaCaptions(props) {
   useEffect(()=>()=>{if(url)URL.revokeObjectURL(url);},[url]);
   useEffect(() => {
     const media = mediaRef.current;
-    if (!media || !file?.type.startsWith('video/') || !visible || !cues.length) return;
-    let trackUrl;
-    let track;
+    if (!media || !file?.type.startsWith('video/')) return;
+    if (trackRef.current?.media !== media) {
+      trackRef.current = { media, track: media.addTextTrack('captions', 'Subtítulos') };
+    }
+    const track = trackRef.current.track;
+    const clear = () => { for (const cue of [...(track.cues || [])]) track.removeCue(cue); };
+    clear();
     try {
-      trackUrl = URL.createObjectURL(new Blob([serializeSubtitles(validateCues(cues, duration))], { type: 'text/vtt' }));
-      track = document.createElement('track');
-      track.kind = 'captions'; track.label = 'Subtítulos'; track.srclang = language === 'english' ? 'en' : 'es'; track.default = true; track.src = trackUrl;
-      track.onload = () => { track.track.mode = 'showing'; };
-      media.appendChild(track);
-    } catch { /* An unfinished edit is not published to the native track. */ }
-    return () => { track?.remove(); if (trackUrl) URL.revokeObjectURL(trackUrl); };
-  }, [cues, visible, file, duration, language]);
+      for (const cue of validateCues(cues, duration)) track.addCue(new VTTCue(cue.start, cue.end, cue.text));
+    } catch { /* Invalid edits are not displayed until corrected. */ }
+    track.mode = visible ? 'showing' : 'disabled';
+    return () => { clear(); track.mode = 'disabled'; };
+  }, [cues, visible, file, duration]);
   const cancel=()=>{clearTimeout(timerRef.current);operation.current++;workerRef.current?.terminate();workerRef.current=null;setBusy(false);setStatus('Transcripción cancelada.');};
   const reset=()=>{cancel();mediaRef.current?.pause();setFile(null);setUrl('');setDuration(0);setTranscript('');setCues([]);setTime(0);setError('');setStatus('');if(inputRef.current)inputRef.current.value='';};
   const select=file=>{

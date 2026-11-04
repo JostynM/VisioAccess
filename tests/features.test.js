@@ -18,7 +18,9 @@ test('manual subtitle timing covers duration and handles empty input',()=>{
 test('SRT and VTT round trips preserve times and accents',()=>{
   const cues=[{start:0.25,end:2.5,text:'Información accesible'},{start:3,end:5.005,text:'Segunda línea'}];
   for(const type of ['srt','vtt']) {
-    const parsed=parseSubtitles(serializeSubtitles(cues,type));
+    const serialized=serializeSubtitles(cues,type);
+    assert.ok(serialized.endsWith('\n\n'));
+    const parsed=parseSubtitles(serialized);
     assert.equal(parsed[0].text,cues[0].text);assert.equal(parsed[1].end,5.005);
   }
 });
