@@ -4,13 +4,27 @@ import AccessibilityBar from '../components/AccessibilityBar';
 import { draftSubtitles, parseSubtitles, serializeSubtitles, validateCues } from '../utils/subtitles';
 
 export default function MediaCaptions(props) {
-  const inputRef = useRef(null), subtitleRef = useRef(null), mediaRef = useRef(null), workerRef = useRef(null), operation = useRef(0);
+  const inputRef = useRef(null), subtitleRef = useRef(null), mediaRef = useRef(null), workerRef = useRef(null), timerRef = useRef(null), operation = useRef(0);
   const [file,setFile]=useState(null), [url,setUrl]=useState(''), [duration,setDuration]=useState(0);
   const [transcript,setTranscript]=useState(''), [cues,setCues]=useState([]), [visible,setVisible]=useState(true), [time,setTime]=useState(0);
   const [error,setError]=useState(''), [status,setStatus]=useState(''), [busy,setBusy]=useState(false), [language,setLanguage]=useState('spanish');
-  useEffect(()=>()=>{workerRef.current?.terminate();operation.current++;},[]);
+  useEffect(()=>()=>{workerRef.current?.terminate();clearTimeout(timerRef.current);operation.current++;},[]);
   useEffect(()=>()=>{if(url)URL.revokeObjectURL(url);},[url]);
-  const cancel=()=>{operation.current++;workerRef.current?.terminate();workerRef.current=null;setBusy(false);setStatus('Transcripción cancelada.');};
+  useEffect(() => {
+    const media = mediaRef.current;
+    if (!media || !file?.type.startsWith('video/') || !visible || !cues.length) return;
+    let trackUrl;
+    let track;
+    try {
+      trackUrl = URL.createObjectURL(new Blob([serializeSubtitles(validateCues(cues, duration))], { type: 'text/vtt' }));
+      track = document.createElement('track');
+      track.kind = 'captions'; track.label = 'Subtítulos'; track.srclang = language === 'english' ? 'en' : 'es'; track.default = true; track.src = trackUrl;
+      track.onload = () => { track.track.mode = 'showing'; };
+      media.appendChild(track);
+    } catch { /* An unfinished edit is not published to the native track. */ }
+    return () => { track?.remove(); if (trackUrl) URL.revokeObjectURL(trackUrl); };
+  }, [cues, visible, file, duration, language]);
+  const cancel=()=>{clearTimeout(timerRef.current);operation.current++;workerRef.current?.terminate();workerRef.current=null;setBusy(false);setStatus('Transcripción cancelada.');};
   const reset=()=>{cancel();mediaRef.current?.pause();setFile(null);setUrl('');setDuration(0);setTranscript('');setCues([]);setTime(0);setError('');setStatus('');if(inputRef.current)inputRef.current.value='';};
   const select=file=>{
     if(!file)return;
@@ -22,7 +36,7 @@ export default function MediaCaptions(props) {
   const generate=()=>{try{saveCues(draftSubtitles(transcript,duration));setStatus('Borrador creado. Revisa y ajusta los tiempos antes de exportarlo.');}catch(e){setError(e.message);}};
   const importCues=async event=>{
     const selected=event.target.files?.[0];if(!selected)return;
-    try{if(selected.size>1024*1024)throw new Error('El archivo de subtítulos debe pesar como máximo 1 MB.');saveCues(parseSubtitles(await selected.text()));setStatus('Subtítulos importados.');}catch(e){setError(e.message);}finally{event.target.value='';}
+    try{if(selected.size>1024*1024)throw new Error('El archivo de subtítulos debe pesar como máximo 1 MB.');const parsed=parseSubtitles(await selected.text());saveCues(parsed);setTranscript(parsed.map(c=>c.text).join('\n'));setStatus('Subtítulos importados.');}catch(e){setError(e.message);}finally{event.target.value='';}
   };
   const download=type=>{
     try{
@@ -47,7 +61,7 @@ export default function MediaCaptions(props) {
       const worker=new Worker(new URL('../workers/transcribe.js',import.meta.url),{type:'module'});
       workerRef.current=worker;
       const cleanup=()=>{clearTimeout(timer);worker.terminate();if(workerRef.current===worker)workerRef.current=null;};
-      const timer=setTimeout(()=>{cleanup();if(id===operation.current){setBusy(false);setError('La transcripción superó 5 minutos. Prueba un archivo más corto.');}},300000);
+      const timer=timerRef.current=setTimeout(()=>{cleanup();if(id===operation.current){setBusy(false);setError('La transcripción superó 5 minutos. Prueba un archivo más corto.');}},300000);
       worker.onerror=()=>{cleanup();if(id===operation.current){setBusy(false);setError('El navegador no pudo iniciar el reconocimiento. Prueba Chrome o Edge actualizado.');}};
       worker.onmessage=({data})=>{
         if(id!==operation.current)return;
@@ -76,7 +90,7 @@ export default function MediaCaptions(props) {
     {status&&<p className="success-message" role="status">{status}</p>}
     {file&&<div className="media-layout"><div className="media-main">
       <div className="selected-video-card"><div className="selected-video-header"><strong>{file.name}</strong><button className="remove-video-button" onClick={reset} aria-label="Quitar archivo"><X/></button></div>
-        <div className="accessible-video">{file.type.startsWith('audio/')?<audio {...mediaProps}/>:<video {...mediaProps}/>}{visible&&active&&<div className={file.type.startsWith('audio/')?'audio-caption':'video-caption-overlay'}>{active}</div>}</div>
+        <div className="accessible-video">{file.type.startsWith('audio/')?<audio {...mediaProps}/>:<video {...mediaProps}/>}{visible&&active&&file.type.startsWith('audio/')&&<div className="audio-caption">{active}</div>}</div>
         <label className="subtitle-toggle-row"><input type="checkbox" checked={visible} onChange={e=>setVisible(e.target.checked)}/>Mostrar subtítulos</label>
       </div>
       <div className="caption-generator-card"><h2>Reconocer voz automáticamente</h2><p>El primer uso descarga un modelo de aproximadamente 75 MB. El audio se procesa en tu dispositivo. Puede tardar varios minutos; revisa siempre el resultado.</p>

@@ -5,6 +5,7 @@ export default function useSpeech() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [rate, setRate] = useState(1);
+  const [speechError, setSpeechError] = useState('');
   const session = useRef(0);
   const utteranceRef = useRef(null);
   useEffect(() => () => {
@@ -21,6 +22,7 @@ export default function useSpeech() {
   const speak = text => {
     if (!speechSupported || !text?.trim()) return;
     stop();
+    setSpeechError('');
     const id = session.current;
     // Short utterances avoid browser limits on long articles.
     const chunks = text.match(/[\s\S]{1,220}(?:\s|$)|[\s\S]{1,220}/g) || [];
@@ -33,7 +35,7 @@ export default function useSpeech() {
       utterance.lang = 'es-PE';
       utterance.rate = rate;
       utterance.onend = next;
-      utterance.onerror = () => { if (id === session.current) { setIsSpeaking(false); setIsPaused(false); } };
+      utterance.onerror = event => { if (id === session.current) { setIsSpeaking(false); setIsPaused(false); if (!['canceled','interrupted'].includes(event.error)) setSpeechError('El navegador no pudo reproducir la voz. Comprueba las voces instaladas y el sonido del dispositivo.'); } };
       window.speechSynthesis.speak(utterance);
     };
     setIsSpeaking(true);
@@ -44,5 +46,5 @@ export default function useSpeech() {
     if (isPaused) window.speechSynthesis.resume(); else window.speechSynthesis.pause();
     setIsPaused(!isPaused);
   };
-  return { speak, stop, pauseOrResume, isSpeaking, isPaused, rate, setRate, speechSupported };
+  return { speak, stop, pauseOrResume, isSpeaking, isPaused, rate, setRate, speechSupported, speechError };
 }

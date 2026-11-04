@@ -66,6 +66,7 @@ function PdfReader({
     rate,
     setRate,
     speechSupported,
+    speechError,
   } = useSpeech();
 
   const validateFile = (file) => {
@@ -539,6 +540,7 @@ function PdfReader({
                 </p>
               </div>
 
+              {speechError && <p role="alert" className="error-message">{speechError}</p>}
               <div className="speech-toolbar">
 
                 <div className="speech-main-controls">

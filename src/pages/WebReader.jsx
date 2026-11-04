@@ -48,6 +48,7 @@ function WebReader({
     rate,
     setRate,
     speechSupported,
+    speechError,
   } = useSpeech();
 
   const normalizeUrl = (value) => {
@@ -477,6 +478,7 @@ function WebReader({
             </button>
           </div>
 
+          {speechError && <p role="alert" className="error-message">{speechError}</p>}
           <div className="speech-toolbar">
             <div className="speech-main-controls">
               {!isSpeaking && (

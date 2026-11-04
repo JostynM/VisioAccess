@@ -87,6 +87,7 @@ function ImageReader({
     rate,
     setRate,
     speechSupported,
+    speechError,
   } = useSpeech();
 
   /*
@@ -876,7 +877,8 @@ function ImageReader({
 
               </div>
 
-              <div className="speech-toolbar">
+              {speechError && <p role="alert" className="error-message">{speechError}</p>}
+          <div className="speech-toolbar">
 
                 <div className="speech-main-controls">
 
