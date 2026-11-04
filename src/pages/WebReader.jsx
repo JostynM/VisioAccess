@@ -161,6 +161,9 @@ function WebReader({
         body: JSON.stringify({ url: normalizedUrl }),
         signal: AbortSignal.timeout(20000),
       });
+      if (!response.headers.get('content-type')?.includes('application/json')) {
+        throw new Error('El servicio de lectura no está disponible. Intenta nuevamente en unos minutos.');
+      }
       const result = await response.json();
       if (!response.ok) throw new Error(result.error?.message || 'No se pudo adaptar la página.');
       setPageTitle(result.title);
