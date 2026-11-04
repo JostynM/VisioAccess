@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import express from 'express';
 import helmet from 'helmet';
-import { rateLimit } from 'express-rate-limit';
+import { rateLimit, ipKeyGenerator } from 'express-rate-limit';
+import { isIP } from 'node:net';
 import { readPage } from './reader.js';
 import { ApiError } from './errors.js';
 
-export function createApp({ reader = readPage } = {}) {
+export function createApp({ reader = readPage, vercel = process.env.VERCEL === '1' } = {}) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
@@ -15,7 +16,14 @@ export function createApp({ reader = readPage } = {}) {
     next();
   });
   app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'visioaccess' }));
-  app.use('/api/web-reader', rateLimit({ windowMs: 60000, limit: 20, standardHeaders: 'draft-8', legacyHeaders: false,
+  app.use('/api/web-reader', rateLimit({ windowMs: 60000, limit: 20,
+    // Only the Vercel adapter trusts its platform-overwritten visitor header.
+    // Standalone deployments use the socket address and ignore spoofable headers.
+    keyGenerator: req => {
+      const visitor = vercel ? req.get('x-real-ip') : undefined;
+      return ipKeyGenerator(visitor && isIP(visitor) ? visitor : req.ip || req.socket.remoteAddress || 'unknown');
+    },
+    standardHeaders: 'draft-8', legacyHeaders: false,
     handler: (_req, res) => res.status(429).json({ error: { code: 'RATE_LIMIT', message: 'Demasiadas consultas. Espera un minuto.' } }) }));
   app.use(express.json({ limit: '4kb' }));
   let activeRequests = 0;

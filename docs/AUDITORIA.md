@@ -9,6 +9,7 @@ Fecha: 4 de noviembre de 2026. Alcance: repositorio completo, frontend, API, ext
 | Alta | El formulario web solo mostraba contenido simulado | API real con extracción de HTML público; botones sugeridos conectados al mismo servicio |
 | Alta | Incompatibilidad ESM al iniciar la función Vercel | jsdom compatible y Node 24.x fijado; probado en preview |
 | Alta | Un extractor de URLs puede acceder a recursos internos | Validación de DNS, fijación de IP al socket, bloqueo de rangos privados/reservados en cada redirección |
+| Alta | En Vercel, el proxy compartía la identidad del limitador entre visitantes | Clave por IP del visitante suministrada por Vercel; fuera de la plataforma se ignoran cabeceras manipulables |
 | Alta | Solicitudes remotas sin límites | Tiempo, tamaño de cuerpo/respuesta/texto, redirecciones, concurrencia y frecuencia limitados |
 | Alta | Dependencias con avisos de seguridad | Actualización de Vite y Transformers.js; npm audit final sin vulnerabilidades reportadas |
 | Media | PDF escaneado quedaba sin texto | OCR local por página cuando no hay texto seleccionable |
@@ -56,7 +57,7 @@ npm run build
 npm audit
 ```
 
-15 casos automatizados: preferencias, borrador de subtítulos, formatos SRT/VTT, tiempos inválidos, URLs, rangos IP, extracción sin scripts/navegación, contenido vacío, redirecciones, transporte HTTP con servidor real de prueba, límites, API, rate limit y lectura por voz. Los archivos de `tests/fixtures` son datos sintéticos públicos de prueba, sin datos personales.
+16 casos automatizados: preferencias, borrador de subtítulos, formatos SRT/VTT, tiempos inválidos, URLs, rangos IP, extracción sin scripts/navegación, contenido vacío, redirecciones, transporte HTTP con servidor real de prueba, límites, API, rate limit lectura por voz y separación del límite por visitante en Vercel. Los archivos de `tests/fixtures` son datos sintéticos públicos de prueba, sin datos personales.
 
 ## Límites operativos
 
@@ -71,3 +72,7 @@ npm audit
 ## Ejecución y publicación
 
 Véase README.md para Node 24, comandos locales, API, límites y Vercel. Se deben comprobar la URL de producción y `/api/health` después de integrar el PR. La evidencia de preview por sí sola no demuestra que producción use esa versión.
+
+## Publicación verificada
+
+El PR #1 se integró en `main` y la versión `0066db2` llegó a producción el 4 de noviembre de 2026. Se comprobó en `https://visio-access.vercel.app` el health check, extracción web real y video MP4 con subtítulos nativos visibles, incluida la activación/desactivación sin duplicación. La inspección de logs detectó la configuración del proxy del limitador; la corrección y su prueba de regresión se incluyen en el cambio posterior.
