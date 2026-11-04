@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import {
@@ -35,6 +35,9 @@ function PdfReader({
   highContrast,
 }) {
   const inputRef = useRef(null);
+  const taskRef = useRef(null);
+  const ocrRef = useRef(null);
+  useEffect(() => () => { taskRef.current?.destroy(); ocrRef.current?.terminate(); }, []);
 
   const [selectedFile, setSelectedFile] =
     useState(null);
@@ -63,6 +66,7 @@ function PdfReader({
     rate,
     setRate,
     speechSupported,
+    speechError,
   } = useSpeech();
 
   const validateFile = (file) => {
@@ -86,6 +90,8 @@ function PdfReader({
       return;
     }
 
+    if (processing) return;
+    if (file.size > 20 * 1024 * 1024) { setError("El PDF debe pesar como máximo 20 MB."); return; }
     stop();
 
     setError("");
@@ -170,9 +176,11 @@ function PdfReader({
             ),
         });
 
+      taskRef.current = loadingTask;
       const pdf =
         await loadingTask.promise;
 
+      if (pdf.numPages > 50) throw new Error("Utiliza un PDF de hasta 50 páginas.");
       setTotalPages(
         pdf.numPages,
       );
@@ -192,7 +200,7 @@ function PdfReader({
         const textContent =
           await page.getTextContent();
 
-        const pageText =
+        let pageText =
           textContent.items
             .map((item) => {
               if (!("str" in item)) {
@@ -208,6 +216,22 @@ function PdfReader({
             .join("")
             .trim();
 
+        if (!pageText.trim()) {
+          if (!ocrRef.current) {
+            const { createWorker } = await import('tesseract.js');
+            ocrRef.current = await createWorker(['spa', 'eng']);
+          }
+          const base = page.getViewport({ scale: 1 });
+          const viewport = page.getViewport({ scale: Math.min(2, 1600 / Math.max(base.width, base.height)) });
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.ceil(viewport.width); canvas.height = Math.ceil(viewport.height);
+          await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+          const result = await ocrRef.current.recognize(canvas);
+          pageText = result.data.text.trim();
+          canvas.width = 0; canvas.height = 0;
+        }
+        page.cleanup();
+        if (completeText.length + pageText.length > 200000) throw new Error('El documento contiene demasiado texto. Divídelo en archivos más pequeños.');
         completeText +=
           `\n\nPágina ${pageNumber}\n\n${pageText}`;
 
@@ -250,9 +274,15 @@ function PdfReader({
       );
 
       setError(
-        "No fue posible procesar el documento. Intenta utilizar otro archivo PDF.",
+        pdfError.name === 'PasswordException' ? 'El PDF está protegido con contraseña. Utiliza una copia desbloqueada.' :
+        /hasta 50|demasiado texto/.test(pdfError.message) ? pdfError.message :
+        'No fue posible procesar el documento. Comprueba el archivo y tu conexión para el OCR.',
       );
     } finally {
+      await taskRef.current?.destroy().catch(() => {});
+      taskRef.current = null;
+      await ocrRef.current?.terminate().catch(() => {});
+      ocrRef.current = null;
       setProcessing(false);
     }
   };
@@ -356,7 +386,7 @@ function PdfReader({
               </button>
 
               <small>
-                Formato admitido: PDF
+                PDF · Máximo 20 MB y 50 páginas
               </small>
             </div>
           )}
@@ -428,8 +458,8 @@ function PdfReader({
                       </strong>
 
                       <p>
-                        Extrayendo el texto
-                        del PDF...
+                        Extrayendo texto; las páginas escaneadas
+                        se reconocen mediante OCR...
                       </p>
                     </div>
 
@@ -510,6 +540,7 @@ function PdfReader({
                 </p>
               </div>
 
+              {speechError && <p role="alert" className="error-message">{speechError}</p>}
               <div className="speech-toolbar">
 
                 <div className="speech-main-controls">

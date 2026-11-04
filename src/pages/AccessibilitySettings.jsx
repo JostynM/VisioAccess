@@ -10,6 +10,16 @@ import {
 
 import AccessibilityBar from "../components/AccessibilityBar";
 
+function handleRadioKeys(event) {
+  if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
+  const buttons = [...event.currentTarget.querySelectorAll('[role="radio"]')];
+  const index = buttons.indexOf(document.activeElement);
+  if (index < 0) return;
+  event.preventDefault();
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + (['ArrowLeft','ArrowUp'].includes(event.key) ? -1 : 1) + buttons.length) % buttons.length;
+  buttons[next].focus(); buttons[next].click();
+}
+
 function AccessibilitySettings({
   fontScale,
 
@@ -178,6 +188,7 @@ function AccessibilitySettings({
           <div
             className="theme-options"
             role="radiogroup"
+            onKeyDown={handleRadioKeys}
             aria-label="Seleccionar apariencia"
           >
             <button
@@ -482,6 +493,7 @@ function AccessibilitySettings({
           <div
             className="color-mode-options"
             role="radiogroup"
+            onKeyDown={handleRadioKeys}
             aria-label="Modo de percepción del color"
           >
             {colorModes.map(

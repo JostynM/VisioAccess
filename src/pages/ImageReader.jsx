@@ -38,8 +38,10 @@ function ImageReader({
   toggleContrast,
   highContrast,
 }) {
-  const inputRef =
-    useRef(null);
+  const inputRef = useRef(null);
+  const workerRef = useRef(null);
+  const cancelledRef = useRef(false);
+  useEffect(() => { cancelledRef.current = false; return () => { cancelledRef.current = true; workerRef.current?.terminate(); }; }, []);
 
   const [
     selectedImage,
@@ -85,6 +87,7 @@ function ImageReader({
     rate,
     setRate,
     speechSupported,
+    speechError,
   } = useSpeech();
 
   /*
@@ -108,6 +111,7 @@ function ImageReader({
    */
 
   const validateImage = (file) => {
+    if (processing) return;
     if (!file) {
       return;
     }
@@ -378,6 +382,7 @@ function ImageReader({
             selectedImage,
           );
 
+        if (cancelledRef.current) return;
         setProgress(10);
 
         /*
@@ -449,6 +454,8 @@ function ImageReader({
          * en distintas posiciones.
          */
 
+        workerRef.current = worker;
+        if (cancelledRef.current) { await worker.terminate(); return; }
         await worker.setParameters({
           tessedit_pageseg_mode:
             PSM.SPARSE_TEXT,
@@ -561,9 +568,10 @@ function ImageReader({
         );
       } finally {
         if (worker) {
-          await worker.terminate();
+          await worker.terminate().catch(() => {});
         }
 
+        workerRef.current = null;
         setProcessing(false);
       }
     };
@@ -869,7 +877,8 @@ function ImageReader({
 
               </div>
 
-              <div className="speech-toolbar">
+              {speechError && <p role="alert" className="error-message">{speechError}</p>}
+          <div className="speech-toolbar">
 
                 <div className="speech-main-controls">
 

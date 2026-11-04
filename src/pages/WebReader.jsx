@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import {
@@ -17,39 +17,9 @@ import AccessibilityBar from "../components/AccessibilityBar";
 import useSpeech from "../hooks/useSpeech";
 
 const demoPages = [
-  {
-    id: "gob",
-    name: "Gobierno del Perú",
-    url: "https://www.gob.pe",
-    title: "Plataforma digital del Estado Peruano",
-    text: `La Plataforma Digital Única del Estado Peruano permite a los ciudadanos acceder a información, trámites y servicios públicos desde un mismo espacio digital.
-
-Los usuarios pueden consultar información relacionada con documentos, servicios, orientación ciudadana y diferentes instituciones públicas.
-
-VisioAccess presenta este contenido en una vista simplificada para facilitar la lectura y reducir elementos visuales innecesarios.`,
-  },
-  {
-    id: "wikipedia",
-    name: "Wikipedia",
-    url: "https://es.wikipedia.org/wiki/Accesibilidad_web",
-    title: "Accesibilidad web",
-    text: `La accesibilidad web busca que las páginas y aplicaciones puedan ser utilizadas por la mayor cantidad posible de personas.
-
-Esto incluye a usuarios con discapacidades visuales, auditivas, motoras o cognitivas, así como a personas mayores.
-
-Entre las medidas de accesibilidad se encuentran el uso de texto legible, buen contraste, navegación mediante teclado y compatibilidad con tecnologías de asistencia.`,
-  },
-  {
-    id: "utp",
-    name: "Universidad",
-    url: "https://www.utp.edu.pe",
-    title: "Información académica",
-    text: `Las plataformas universitarias permiten a los estudiantes consultar información relacionada con programas académicos, servicios, actividades y procedimientos.
-
-Una interfaz accesible facilita que los usuarios puedan localizar la información principal sin depender de diseños complejos o elementos visuales pequeños.
-
-VisioAccess puede representar este tipo de información mediante una estructura más clara y sencilla.`,
-  },
+  { id: 'gob', name: 'Gobierno del Perú', url: 'https://www.gob.pe' },
+  { id: 'wikipedia', name: 'Wikipedia', url: 'https://es.wikipedia.org/wiki/Accesibilidad_web' },
+  { id: 'utp', name: 'Universidad', url: 'https://www.utp.edu.pe' },
 ];
 
 function WebReader({
@@ -66,7 +36,8 @@ function WebReader({
 
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
-  const [isDemo, setIsDemo] = useState(false);
+  const requestRef = useRef(null);
+  useEffect(() => () => requestRef.current?.abort(), []);
 
   const {
     speak,
@@ -77,6 +48,7 @@ function WebReader({
     rate,
     setRate,
     speechSupported,
+    speechError,
   } = useSpeech();
 
   const normalizeUrl = (value) => {
@@ -104,35 +76,12 @@ function WebReader({
       .trim();
   };
 
-  const simulateLoading = () => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, 900);
-    });
-  };
-
-  const useDemoPage = async (demo) => {
-    stop();
-
-    setError("");
-    setProcessing(true);
-
-    setUrl(demo.url);
-
-    await simulateLoading();
-
-    setPageTitle(demo.title);
-    setPageText(demo.text);
-    setIsDemo(true);
-
-    setProcessing(false);
-  };
-
-  const adaptUrl = async () => {
+  const adaptUrl = async (value) => {
     stop();
 
     setError("");
 
-    const normalizedUrl = normalizeUrl(url);
+    const normalizedUrl = normalizeUrl(typeof value === 'string' ? value : url);
 
     if (!normalizedUrl) {
       setError(
@@ -143,7 +92,8 @@ function WebReader({
     }
 
     try {
-      new URL(normalizedUrl);
+      const parsed = new URL(normalizedUrl);
+      if (!['https:', 'http:'].includes(parsed.protocol) || parsed.username || parsed.password) throw new Error();
     } catch {
       setError(
         "La dirección ingresada no parece ser válida.",
@@ -152,39 +102,37 @@ function WebReader({
       return;
     }
 
+    setUrl(normalizedUrl);
     setProcessing(true);
+    requestRef.current?.abort();
+    const controller = new AbortController();
+    requestRef.current = controller;
 
-    await simulateLoading();
+    try {
+      const response = await fetch('/api/web-reader', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: normalizedUrl }),
+        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(20000)]),
+      });
+      if (!response.headers.get('content-type')?.includes('application/json')) {
+        throw new Error('El servicio de lectura no está disponible. Intenta nuevamente en unos minutos.');
+      }
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error?.message || 'No se pudo adaptar la página.');
+      setPageTitle(result.title);
+      setPageText(result.text);
+      setUrl(result.url);
 
-    const matchingDemo = demoPages.find((demo) => {
-      const demoHostname = new URL(demo.url).hostname
-        .replace("www.", "")
-        .toLowerCase();
-
-      const enteredHostname = new URL(normalizedUrl).hostname
-        .replace("www.", "")
-        .toLowerCase();
-
-      return (
-        enteredHostname === demoHostname ||
-        enteredHostname.endsWith(`.${demoHostname}`)
-      );
-    });
-
-    if (matchingDemo) {
-      setPageTitle(matchingDemo.title);
-      setPageText(matchingDemo.text);
-      setIsDemo(true);
+    } catch (error) {
+      setError(error.name === 'TimeoutError'
+        ? 'La consulta tardó demasiado. Intenta nuevamente.'
+        : error.message === 'Failed to fetch'
+          ? 'No se pudo conectar con el servicio de lectura.'
+          : error.message);
+    } finally {
       setProcessing(false);
-
-      return;
     }
-
-    setProcessing(false);
-
-    setError(
-      "En esta versión del prototipo la aplicación no descarga automáticamente cualquier página externa. Utiliza uno de los ejemplos disponibles o pega el contenido que deseas adaptar.",
-    );
   };
 
   const adaptManualText = async () => {
@@ -204,11 +152,11 @@ function WebReader({
 
     setProcessing(true);
 
-    await simulateLoading();
+
 
     setPageTitle("Contenido adaptado");
     setPageText(text);
-    setIsDemo(false);
+
 
     setProcessing(false);
   };
@@ -219,7 +167,7 @@ function WebReader({
     setPageTitle("");
     setPageText("");
     setError("");
-    setIsDemo(false);
+
   };
 
   const handleRateChange = (event) => {
@@ -332,7 +280,7 @@ function WebReader({
                   )}
                 </button>
 
-                {url && (
+                {/^https?:\/\//i.test(url) && !/[<>]/.test(url) && (
                   <a
                     href={normalizeUrl(url)}
                     target="_blank"
@@ -349,7 +297,7 @@ function WebReader({
 
             <div className="demo-pages">
               <span className="manual-label">
-                EJEMPLOS DEL PROTOTIPO
+                PÁGINAS SUGERIDAS
               </span>
 
               <h2>
@@ -357,8 +305,8 @@ function WebReader({
               </h2>
 
               <p>
-                Estos ejemplos permiten demostrar el flujo
-                completo de adaptación.
+                Estas direcciones consultan el contenido real
+                del sitio web.
               </p>
 
               <div className="demo-page-grid">
@@ -368,7 +316,7 @@ function WebReader({
                     type="button"
                     className="demo-page-button"
                     onClick={() =>
-                      useDemoPage(demo)
+                      adaptUrl(demo.url)
                     }
                     disabled={processing}
                   >
@@ -404,6 +352,7 @@ function WebReader({
               </p>
 
               <textarea
+                aria-label="Contenido para adaptar"
                 value={manualText}
                 onChange={(event) =>
                   setManualText(event.target.value)
@@ -456,8 +405,8 @@ function WebReader({
                 </strong>
 
                 <p>
-                  Utiliza una página de ejemplo o pega
-                  contenido.
+                  Pega una URL pública o selecciona una
+                  página sugerida.
                 </p>
               </div>
             </div>
@@ -494,13 +443,13 @@ function WebReader({
 
             <div className="web-cors-note">
               <strong>
-                Versión de prototipo
+                Lectura de sitios públicos
               </strong>
 
               <p>
-                La recuperación automática de cualquier
-                página externa se implementaría en una
-                versión posterior.
+                Algunos sitios requieren iniciar sesión o ejecutar
+                JavaScript y no permiten extraer su contenido.
+                En esos casos puedes pegar el texto manualmente.
               </p>
             </div>
           </aside>
@@ -509,12 +458,6 @@ function WebReader({
 
       {pageText && (
         <div className="web-reader-result">
-          {isDemo && (
-            <div className="prototype-notice">
-              Demostración del flujo de adaptación
-            </div>
-          )}
-
           <div className="web-result-top">
             <div>
               <span className="section-label">
@@ -535,6 +478,7 @@ function WebReader({
             </button>
           </div>
 
+          {speechError && <p role="alert" className="error-message">{speechError}</p>}
           <div className="speech-toolbar">
             <div className="speech-main-controls">
               {!isSpeaking && (

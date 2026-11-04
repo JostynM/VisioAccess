@@ -302,3 +302,8 @@ img {
 .secondary-button:hover {
   background: #f4f6f8;
 }
+:focus-visible { outline: 3px solid #946800; outline-offset: 4px; }
+.skip-link { position: fixed; top: -100px; left: 1rem; z-index: 1000; padding: 1rem; background: #fff; color: #172942; }
+.skip-link:focus { top: 1rem; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+@media (max-width: 768px) { .sidebar:not(.mobile-open) { visibility: hidden; } }
