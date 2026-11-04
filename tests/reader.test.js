@@ -71,3 +71,16 @@ test('rate limits extraction requests', async () => {
   for(let i=0;i<20;i++) await request(app).post('/api/web-reader').send({url:'https://example.com'}).expect(200);
   await request(app).post('/api/web-reader').send({url:'https://example.com'}).expect(429);
 });
+
+
+test('Vercel visitors have separate counters while standalone ignores spoofed IP headers', async () => {
+  const hosted = createApp({ vercel: true, reader: async () => ({ text: paragraph }) });
+  const local = createApp({ vercel: false, reader: async () => ({ text: paragraph }) });
+  for (let i=0;i<20;i++) {
+    await request(hosted).post('/api/web-reader').set('x-real-ip','8.8.8.8').set('Forwarded','for=1.2.3.4').send({url:'https://example.com'}).expect(200);
+    await request(local).post('/api/web-reader').set('x-real-ip','8.8.8.8').send({url:'https://example.com'}).expect(200);
+  }
+  await request(hosted).post('/api/web-reader').set('x-real-ip','8.8.8.8').send({url:'https://example.com'}).expect(429);
+  await request(hosted).post('/api/web-reader').set('x-real-ip','9.9.9.9').send({url:'https://example.com'}).expect(200);
+  await request(local).post('/api/web-reader').set('x-real-ip','9.9.9.9').send({url:'https://example.com'}).expect(429);
+});
