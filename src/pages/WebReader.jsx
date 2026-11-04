@@ -110,7 +110,7 @@ function WebReader({
     });
   };
 
-  const useDemoPage = async (demo) => {
+  const loadDemoPage = async (demo) => {
     stop();
 
     setError("");
@@ -154,37 +154,28 @@ function WebReader({
 
     setProcessing(true);
 
-    await simulateLoading();
-
-    const matchingDemo = demoPages.find((demo) => {
-      const demoHostname = new URL(demo.url).hostname
-        .replace("www.", "")
-        .toLowerCase();
-
-      const enteredHostname = new URL(normalizedUrl).hostname
-        .replace("www.", "")
-        .toLowerCase();
-
-      return (
-        enteredHostname === demoHostname ||
-        enteredHostname.endsWith(`.${demoHostname}`)
-      );
-    });
-
-    if (matchingDemo) {
-      setPageTitle(matchingDemo.title);
-      setPageText(matchingDemo.text);
-      setIsDemo(true);
+    try {
+      const response = await fetch('/api/web-reader', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: normalizedUrl }),
+        signal: AbortSignal.timeout(20000),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error?.message || 'No se pudo adaptar la página.');
+      setPageTitle(result.title);
+      setPageText(result.text);
+      setUrl(result.url);
+      setIsDemo(false);
+    } catch (error) {
+      setError(error.name === 'TimeoutError'
+        ? 'La consulta tardó demasiado. Intenta nuevamente.'
+        : error.message === 'Failed to fetch'
+          ? 'No se pudo conectar con el servicio de lectura.'
+          : error.message);
+    } finally {
       setProcessing(false);
-
-      return;
     }
-
-    setProcessing(false);
-
-    setError(
-      "En esta versión del prototipo la aplicación no descarga automáticamente cualquier página externa. Utiliza uno de los ejemplos disponibles o pega el contenido que deseas adaptar.",
-    );
   };
 
   const adaptManualText = async () => {
@@ -368,7 +359,7 @@ function WebReader({
                     type="button"
                     className="demo-page-button"
                     onClick={() =>
-                      useDemoPage(demo)
+                      loadDemoPage(demo)
                     }
                     disabled={processing}
                   >
@@ -494,13 +485,13 @@ function WebReader({
 
             <div className="web-cors-note">
               <strong>
-                Versión de prototipo
+                Lectura de sitios públicos
               </strong>
 
               <p>
-                La recuperación automática de cualquier
-                página externa se implementaría en una
-                versión posterior.
+                Algunos sitios requieren iniciar sesión o ejecutar
+                JavaScript y no permiten extraer su contenido.
+                En esos casos puedes pegar el texto manualmente.
               </p>
             </div>
           </aside>
