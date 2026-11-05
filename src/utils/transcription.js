@@ -86,6 +86,7 @@ export async function transcribeInChunks({ audio, recognizer, language, onProgre
       const result = await recognizer(samples, {
         language, task: 'transcribe', return_timestamps: true,
         max_new_tokens: 192, num_beams: 1, do_sample: false,
+        repetition_penalty: 1.1, no_repeat_ngram_size: 6,
         ...(createStreamer ? { streamer: createStreamer(progress) } : {}),
       });
       lowConfidence ||= hasRepetitiveText(result.text || (result.chunks || []).map(cue => cue.text || '').join(' '));

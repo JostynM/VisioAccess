@@ -8,8 +8,8 @@ self.onmessage = async ({ data }) => {
   let phase = 'loading';
   try {
     self.postMessage({ status: 'loading', message: 'Cargando el reconocimiento de voz. La primera descarga puede tardar varios minutos.' });
-    transcriber ||= await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny', {
-      dtype: 'q8', device: 'wasm',
+    transcriber ||= await pipeline('automatic-speech-recognition', 'onnx-community/whisper-base', {
+      dtype: { encoder_model: 'fp32', decoder_model_merged: 'q8' }, device: 'wasm',
       progress_callback: event => {
         if (event.status === 'progress') self.postMessage({ status: 'progress', message: `Descargando ${event.file || 'modelo'}: ${Math.round(event.progress || 0)}%` });
       },
