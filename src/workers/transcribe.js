@@ -1,5 +1,6 @@
 import { pipeline, env, WhisperTextStreamer } from '@huggingface/transformers';
 import { transcribeInChunks } from '../utils/transcription';
+import { TRANSCRIPTION_MODEL, TRANSCRIPTION_REVISION } from '../utils/transcriptionModel';
 
 env.allowLocalModels = false;
 env.backends.onnx.wasm.numThreads = 1;
@@ -8,7 +9,8 @@ self.onmessage = async ({ data }) => {
   let phase = 'loading';
   try {
     self.postMessage({ status: 'loading', message: 'Cargando el reconocimiento de voz. La primera descarga puede tardar varios minutos.' });
-    transcriber ||= await pipeline('automatic-speech-recognition', 'onnx-community/whisper-small', {
+    transcriber ||= await pipeline('automatic-speech-recognition', TRANSCRIPTION_MODEL, {
+      revision: TRANSCRIPTION_REVISION,
       dtype: 'q8', device: 'wasm',
       progress_callback: event => {
         if (event.status === 'progress') self.postMessage({ status: 'progress', message: `Descargando ${event.file || 'modelo'}: ${Math.round(event.progress || 0)}%` });

@@ -36,7 +36,7 @@ Solo HTTP/HTTPS, sin credenciales ni puertos especiales. Se valida la resolució
 
 Se permiten 20 consultas por minuto por IP y proceso. En Vercel se usa su cabecera de visitante `x-real-ip`; fuera de Vercel se usa la IP del socket y se ignoran cabeceras de proxy no confiables. En despliegues con varias instancias, aplica también un límite distribuido o reglas del proveedor: el contador en memoria no es global. Una política de salida de red que bloquee destinos internos es una defensa adicional recomendada para producción.
 
-Solo se extrae el HTML público recibido. No se inicia sesión, no se evitan bloqueos del sitio y no se ejecuta JavaScript remoto. Sitios que requieren esas funciones pueden no producir contenido. El lector manual continúa disponible. Multimedia permite transcripción local con Whisper Tiny de hasta 2 minutos (descarga inicial de unos 75 MB), edición e importación/exportación SRT/VTT. Procesa fragmentos de hasta 22 segundos y muestra subtítulos parciales. Puedes cancelar sin perder los fragmentos terminados. Si el modelo devuelve tiempos inválidos, se conservan las palabras con tiempos aproximados y un aviso para revisarlos. El audio no se envía al backend. Revisa el resultado: no se garantiza exactitud automática.
+Solo se extrae el HTML público recibido. No se inicia sesión, no se evitan bloqueos del sitio y no se ejecuta JavaScript remoto. Sitios que requieren esas funciones pueden no producir contenido. El lector manual continúa disponible. Multimedia permite transcripción local con Whisper Small de hasta 2 minutos (descarga inicial de unos 250 MB), edición e importación/exportación SRT/VTT. Procesa fragmentos de hasta 22 segundos y muestra subtítulos parciales. Puedes cancelar sin perder los fragmentos terminados. Si el modelo devuelve tiempos inválidos, se conservan las palabras con tiempos aproximados y un aviso para revisarlos. El audio no se envía al backend. Revisa el resultado: no se garantiza exactitud automática.
 
 ## Vercel
 
@@ -53,3 +53,17 @@ npm run build
 ```
 
 Las pruebas verifican API, extracción con acentos, DNS, redes privadas, redirecciones, transporte HTTP real con servidor de prueba, tamaños y rate limit. GitHub Actions ejecuta estas comprobaciones en Node 24.
+
+
+## Calidad de transcripción (prueba opcional)
+
+La inferencia utiliza Whisper Small q8 con revisión de pesos fijada, penalización de repeticiones y ventanas secuenciales. Conserva límites de 2 minutos, resultados parciales, cancelación y advertencias. El modelo requiere una descarga inicial de unos 250 MB más WebAssembly y memoria suficiente. El texto sigue requiriendo revisión, especialmente nombres propios; no garantiza una transcripción literal perfecta.
+
+La prueba de calidad descarga el modelo y se ejecuta aparte de CI. Usa el video BlindSense original identificado por SHA-256 en `tests/fixtures/blindsense-reference.json`, Node 24 y FFmpeg. Convierte el audio a PCM mono de 16000 Hz:
+
+```bash
+ffmpeg -i BlindSense_video_informativo.mp4 -ar 16000 -ac 1 -f f32le blindsense.f32le
+node scripts/evaluate-transcription.mjs --pcm blindsense.f32le --report resultado-calidad.json
+```
+
+Compara el texto con el guion y falla si WER supera 0,25 o aparecen bucles detectables. WER cuenta sustituciones, omisiones e inserciones; puede superar 100 % cuando se inventa mucho texto. No expresa un porcentaje de exactitud universal. La normalización ignora tildes, mayúsculas y puntuación, sin convertir números escritos a cifras. Para reproducir la configuración anterior, añade `--model Xenova/whisper-tiny --legacy`. La memoria/tiempo del equipo de evaluación no predicen los de todos los navegadores.
