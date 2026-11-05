@@ -101,7 +101,7 @@ export default function MediaCaptions(props) {
         const items = (result.chunks || []).map(c => ({ start: c.timestamp[0], end: Math.min(duration, c.timestamp[1]), text: c.text }));
         if (items.length) { saveCues(items); setTranscript(result.text); }
       };
-      worker.onerror = () => fail('El navegador no pudo ejecutar el reconocimiento. Prueba Chrome o Edge actualizado. Los fragmentos terminados se conservan.');
+      worker.onerror = event => { console.error('Transcription worker failed', event.message, event.filename, event.lineno); fail('El navegador no pudo ejecutar el reconocimiento. Prueba Chrome o Edge actualizado. Los fragmentos terminados se conservan.'); };
       worker.onmessageerror = () => fail('No se pudo recibir el resultado del reconocimiento. Intenta nuevamente.');
       worker.onmessage = ({ data }) => {
         if (!current()) return;

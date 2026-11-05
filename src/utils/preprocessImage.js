@@ -189,6 +189,8 @@ export async function preprocessImage(file) {
   sourceContext.imageSmoothingQuality =
     "high";
 
+  sourceContext.fillStyle = '#ffffff';
+  sourceContext.fillRect(0, 0, width, height);
   sourceContext.drawImage(
     image,
     0,
