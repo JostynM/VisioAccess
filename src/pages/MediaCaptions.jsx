@@ -153,7 +153,7 @@ export default function MediaCaptions(props) {
         <div className="accessible-video">{file.type.startsWith('audio/')?<audio {...mediaProps}/>:<video {...mediaProps}/>}{visible&&active&&file.type.startsWith('audio/')&&<div className="audio-caption">{active}</div>}</div>
         <label className="subtitle-toggle-row"><input type="checkbox" checked={visible} onChange={e=>setVisible(e.target.checked)}/>Mostrar subtítulos</label>
       </div>
-      <div className="caption-generator-card"><h2>Reconocer voz automáticamente</h2><p>El primer uso descarga un modelo de aproximadamente 140 MB. El audio se procesa por fragmentos en tu dispositivo. Verás el avance y podrás conservar los resultados parciales; revisa siempre el texto.</p>
+      <div className="caption-generator-card"><h2>Reconocer voz automáticamente</h2><p>El primer uso descarga un modelo de aproximadamente 250 MB. El audio se procesa por fragmentos en tu dispositivo. Verás el avance y podrás conservar los resultados parciales; revisa siempre el texto.</p>
         <label>Idioma del audio <select value={language} disabled={busy} onChange={e=>setLanguage(e.target.value)}><option value="spanish">Español</option><option value="english">Inglés</option></select></label>
         <button className="generate-subtitles-button" disabled={busy||!duration} onClick={transcribe}>{busy?'Transcribiendo...':'Transcribir audio'}</button>{busy&&<button className="secondary-button" onClick={cancel}>Cancelar transcripción</button>}
       </div>
