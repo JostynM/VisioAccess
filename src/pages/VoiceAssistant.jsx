@@ -1,3 +1,4 @@
+import { normalizeVoiceCommand } from '../utils/voiceCommands';
 import {
   useEffect,
   useRef,
@@ -105,13 +106,7 @@ function VoiceAssistant({
   const executeVoiceCommand = (
     spokenText,
   ) => {
-    const command = spokenText
-      .toLowerCase()
-      .trim()
-      .replace(
-        /[.,;:!?¿¡]/g,
-        "",
-      );
+    const command = normalizeVoiceCommand(spokenText);
 
     /*
      * NAVEGACIÓN
