@@ -42,6 +42,7 @@ test('redirect limit prevents loops', async () => {
 });
 test('HTTP transport handles HTML, unsupported types, upstream errors and byte limit', async t => {
   const server = http.createServer((req,res) => {
+    if (req.url === '/slow') return;
     if (req.url === '/bad') {res.writeHead(403).end();return;}
     res.setHeader('Content-Type',req.url === '/pdf' ? 'application/pdf' : 'text/html');
     res.end(req.url === '/large' ? 'x'.repeat(2*1024*1024+1) : html);
@@ -54,6 +55,7 @@ test('HTTP transport handles HTML, unsupported types, upstream errors and byte l
   await assert.rejects(download('/bad'),{code:'UPSTREAM_ERROR'});
   await assert.rejects(download('/pdf'),{code:'UNSUPPORTED_CONTENT'});
   await assert.rejects(download('/large'),{code:'PAGE_TOO_LARGE'});
+  await assert.rejects(requestPage(new URL(`http://example.test:${server.address().port}/slow`),target,AbortSignal.timeout(40)),{code:'ABORT_ERR'});
 });
 test('API health, extraction, validation, malformed JSON and missing routes', async () => {
   const app = createApp({reader: async value => {validateUrl(value);return extractContent(Buffer.from(html),new URL(value));}});
@@ -83,4 +85,27 @@ test('Vercel visitors have separate counters while standalone ignores spoofed IP
   await request(hosted).post('/api/web-reader').set('x-real-ip','8.8.8.8').send({url:'https://example.com'}).expect(429);
   await request(hosted).post('/api/web-reader').set('x-real-ip','9.9.9.9').send({url:'https://example.com'}).expect(200);
   await request(local).post('/api/web-reader').set('x-real-ip','9.9.9.9').send({url:'https://example.com'}).expect(429);
+});
+
+
+test('API saturation preserves health checks and releases capacity after errors', async () => {
+  const releases=[];
+  const app=createApp({reader:()=>new Promise((resolve,reject)=>releases.push({resolve,reject}))});
+  const pending=Array.from({length:4},()=>request(app).post('/api/web-reader').send({url:'https://example.com'}).then(response=>response));
+  const waitForRequests = async count => {
+    const deadline = Date.now() + 2000;
+    while (releases.length < count && Date.now() < deadline) await new Promise(resolve=>setImmediate(resolve));
+    assert.equal(releases.length, count, 'reader requests started within deadline');
+  };
+  await waitForRequests(4);
+  await request(app).post('/api/web-reader').send({url:'https://example.com'}).expect(503);
+  await request(app).get('/api/health').expect(200);
+  releases[0].reject(new Error('simulated upstream failure'));
+  releases.slice(1).forEach(item=>item.resolve({text:'ok'}));
+  const results=await Promise.all(pending);
+  assert.equal(results.filter(r=>r.status===500).length,1);
+  const retry=request(app).post('/api/web-reader').send({url:'https://example.com'}).then(response=>response);
+  await waitForRequests(5);
+  releases[4].resolve({text:'recovered'});
+  assert.equal((await retry).status,200);
 });

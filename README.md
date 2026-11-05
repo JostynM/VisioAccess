@@ -36,7 +36,7 @@ Solo HTTP/HTTPS, sin credenciales ni puertos especiales. Se valida la resolució
 
 Se permiten 20 consultas por minuto por IP y proceso. En Vercel se usa su cabecera de visitante `x-real-ip`; fuera de Vercel se usa la IP del socket y se ignoran cabeceras de proxy no confiables. En despliegues con varias instancias, aplica también un límite distribuido o reglas del proveedor: el contador en memoria no es global. Una política de salida de red que bloquee destinos internos es una defensa adicional recomendada para producción.
 
-Solo se extrae el HTML público recibido. No se inicia sesión, no se evitan bloqueos del sitio y no se ejecuta JavaScript remoto. Sitios que requieren esas funciones pueden no producir contenido. El lector manual continúa disponible. Multimedia permite transcripción local con Whisper Tiny de hasta 2 minutos (descarga inicial de unos 75 MB), edición e importación/exportación SRT/VTT. El audio no se envía al backend. Revisa el resultado: no se garantiza exactitud automática.
+Solo se extrae el HTML público recibido. No se inicia sesión, no se evitan bloqueos del sitio y no se ejecuta JavaScript remoto. Sitios que requieren esas funciones pueden no producir contenido. El lector manual continúa disponible. Multimedia permite transcripción local con Whisper Tiny de hasta 2 minutos (descarga inicial de unos 75 MB), edición e importación/exportación SRT/VTT. Procesa fragmentos de hasta 22 segundos y muestra subtítulos parciales. Puedes cancelar sin perder los fragmentos terminados. Si el modelo devuelve tiempos inválidos, se conservan las palabras con tiempos aproximados y un aviso para revisarlos. El audio no se envía al backend. Revisa el resultado: no se garantiza exactitud automática.
 
 ## Vercel
 

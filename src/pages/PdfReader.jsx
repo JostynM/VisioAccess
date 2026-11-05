@@ -37,7 +37,8 @@ function PdfReader({
   const inputRef = useRef(null);
   const taskRef = useRef(null);
   const ocrRef = useRef(null);
-  useEffect(() => () => { taskRef.current?.destroy(); ocrRef.current?.terminate(); }, []);
+  const activeRef = useRef(true);
+  useEffect(() => { activeRef.current = true; return () => { activeRef.current = false; taskRef.current?.destroy(); ocrRef.current?.terminate(); }; }, []);
 
   const [selectedFile, setSelectedFile] =
     useState(null);
@@ -168,6 +169,7 @@ function PdfReader({
       const arrayBuffer =
         await selectedFile.arrayBuffer();
 
+      if (!activeRef.current) return;
       const loadingTask =
         pdfjsLib.getDocument({
           data:
@@ -180,6 +182,7 @@ function PdfReader({
       const pdf =
         await loadingTask.promise;
 
+      if (!activeRef.current) return;
       if (pdf.numPages > 50) throw new Error("Utiliza un PDF de hasta 50 páginas.");
       setTotalPages(
         pdf.numPages,
@@ -200,6 +203,7 @@ function PdfReader({
         const textContent =
           await page.getTextContent();
 
+        if (!activeRef.current) return;
         let pageText =
           textContent.items
             .map((item) => {
@@ -219,7 +223,9 @@ function PdfReader({
         if (!pageText.trim()) {
           if (!ocrRef.current) {
             const { createWorker } = await import('tesseract.js');
+            if (!activeRef.current) return;
             ocrRef.current = await createWorker(['spa', 'eng']);
+            if (!activeRef.current) return;
           }
           const base = page.getViewport({ scale: 1 });
           const viewport = page.getViewport({ scale: Math.min(2, 1600 / Math.max(base.width, base.height)) });

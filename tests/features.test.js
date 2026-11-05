@@ -33,3 +33,11 @@ test('invalid subtitles and out of media times are rejected',()=>{
   assert.throws(()=>validateCues([{start:0,end:5,text:'a'}],3));
   assert.throws(()=>parseSubtitles('nonsense'));assert.throws(()=>parseSubtitles('1\n00:70:00 --> 00:80:00\nHola'));
 });
+
+import { normalizeVoiceCommand } from '../src/utils/voiceCommands.js';
+test('Spanish voice commands accept accents, punctuation and repeated spaces',()=>{
+  assert.equal(normalizeVoiceCommand(' ¡IMÁGENES! '),'imagenes');
+  assert.ok(normalizeVoiceCommand('Ir a imágenes').includes('imagen'));
+  assert.equal(normalizeVoiceCommand('Páginas   web.'),'paginas web');
+  assert.equal(normalizeVoiceCommand('Configuración'),'configuracion');
+});
