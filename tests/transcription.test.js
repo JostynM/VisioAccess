@@ -37,6 +37,7 @@ test('sequential inference provides partial results with global timestamps and b
   const result=await transcribeInChunks({audio:speech(45),language:'spanish',onProgress:event=>events.push(event),recognizer:async(audio,options)=>{
     running++;maxRunning=Math.max(maxRunning,running);calls++;
     assert.equal(options.max_new_tokens,192);assert.equal(options.language,'spanish');
+    assert.equal(options.no_repeat_ngram_size,6);assert.equal(options.repetition_penalty,1.1);
     await Promise.resolve();running--;
     return {text:`Parte ${calls}`,chunks:[{text:`Parte ${calls}`,timestamp:[0,audio.length/AUDIO_RATE]}]};
   }});

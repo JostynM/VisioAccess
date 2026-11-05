@@ -1,5 +1,7 @@
 # Auditoría técnica y funcional de VisioAccess
 
+**Estado más reciente:** el PR #5 sustituye el modelo de subtítulos y supera la regresión BlindSense con 17,33 % WER, sin bucles. Los apartados anteriores conservan la evidencia histórica de los fallos y sus correcciones. La transcripción automática sigue requiriendo revisión humana y no se declara certificación WCAG.
+
 Actualización: 5 de noviembre de 2026 (UTC). Alcance: repositorio completo, frontend, API, extracción web, PDF/OCR, multimedia, preferencias, navegación, dependencias y despliegue Vercel. No equivale a una certificación WCAG ni a una prueba de penetración independiente.
 
 ## Hallazgos y correcciones
@@ -109,6 +111,27 @@ Base de esta revisión: `74506f8` en main. Cambios en PR #3. Se revisaron la API
 
 Preview `cd8aa0b` completó los seis fragmentos del MP4 BlindSense (105,43 s), mostró resultados parciales y generó 15 segmentos, desde 0 hasta aproximadamente 105,4 s. La UI mostró explícitamente recuperación de tiempos aproximados. Descargas SRT y VTT completadas desde los botones reales.
 
-**Pendiente de prioridad alta: calidad de reconocimiento.** En esta grabación con voz sintética española, Whisper Tiny produjo texto con bucles y contenido inexacto. El procesamiento ya finaliza, pero ese texto no sirve como transcripción final sin corrección. Se añadió detección heurística de frases repetidas con advertencia visible y prueba de regresión; no se presenta como una puntuación de confianza ni detecta todos los errores. No se certifica una mejora de precisión del modelo. El siguiente trabajo de producto debe comparar modelos más precisos y grabaciones reales en español con transcripciones de referencia, midiendo exactitud, tiempo y memoria antes de sustituir el modelo. Las alternativas manuales e importación SRT/VTT siguen disponibles.
+**Hallazgo de calidad de la segunda revisión (corregido posteriormente en PR #5).** En esta grabación con voz sintética española, Whisper Tiny produjo texto con bucles y contenido inexacto. El procesamiento ya finaliza, pero ese texto no sirve como transcripción final sin corrección. Se añadió detección heurística de frases repetidas con advertencia visible y prueba de regresión; no se presenta como una puntuación de confianza ni detecta todos los errores. No se certifica una mejora de precisión del modelo. El siguiente trabajo de producto debe comparar modelos más precisos y grabaciones reales en español con transcripciones de referencia, midiendo exactitud, tiempo y memoria antes de sustituir el modelo. Las alternativas manuales e importación SRT/VTT siguen disponibles.
 
-El resultado de la auditoría es **apto para piloto con limitaciones documentadas**, no «producto terminado sin pendientes». El reconocimiento automático de este audio no supera el criterio de calidad. Quedan también la matriz de dispositivos/lectores de pantalla y controles distribuidos para escalar tráfico.
+El resultado de aquella revisión fue **apto para piloto con limitaciones documentadas**, no «producto terminado sin pendientes». El reconocimiento automático de este audio no supera el criterio de calidad. Quedan también la matriz de dispositivos/lectores de pantalla y controles distribuidos para escalar tráfico.
+
+
+## Cierre del reconocimiento: PR #5
+
+Se sustituyó Whisper Tiny por `onnx-community/whisper-small` q8, fijando la revisión `36050c46d777d46dc4b5f43f6d90574fc38f8732`. Se limitan repeticiones en generación (`repetition_penalty=1.1`, `no_repeat_ngram_size=6`) además del presupuesto de 192 tokens por fragmento. La carga inicial dispone de hasta 300 segundos; se mantienen los plazos por fragmento y techo global. La UI informa de la descarga inicial aproximada de 250 MB. No se envía audio al backend ni se requiere clave o servicio de pago.
+
+Prueba con referencia: guion original de 300 palabras del MP4 BlindSense de 105,418625 s. WER tras normalizar mayúsculas, puntuación y tildes; los números escritos y cifras permanecen distintos. Criterio de aceptación de esta regresión: WER ≤25 %, sin bucles detectados y finalización de seis fragmentos. Este criterio es específico de la muestra y no una certificación de precisión general.
+
+| Configuración | Palabras reconocidas | Ediciones | WER | Tiempo CPU con caché |
+|---|---:|---:|---:|---:|
+| Tiny anterior | 921 | 901 | 300,33 % | 22,9 s |
+| Small q8 con control de repetición | 292 | 52 | 17,33 % | 31,1 s |
+
+La mayor parte de los errores restantes afecta a nombres propios, términos y la pronunciación sintética. El texto ya es coherente y no entra en bucles en esta muestra; siempre se requiere revisión editorial. WER superior a 100 % en Tiny refleja inserciones, no una tasa de «exactitud negativa». Son mediciones de Node/ONNX en CPU del entorno de prueba, no tiempos prometidos para el equipo del usuario. El benchmark repetido con el script del repositorio registró alrededor de 1,3 GiB de RSS máximo; se debe disponer de memoria suficiente. No se declara compatibilidad en todos los móviles.
+
+Se añadieron una referencia con huella SHA-256 del video, un evaluador reproducible opcional y una prueba del cálculo de WER. Las pruebas habituales no descargan modelos ni hacen inferencia en CI. Siguen vigentes los límites del informe sobre dispositivos/lectores de pantalla reales y tráfico distribuido; no son funciones faltantes de este flujo local.
+
+
+Verificación en Chrome/WASM de la configuración elegida: seis fragmentos completados del video, 292 palabras, 48 ediciones sobre 300 de referencia (WER 16 %), sin repetición detectada ni reconstrucción de tiempos. Exportaciones SRT y VTT descargadas; 25 segmentos válidos desde 0 s hasta 104,2 s, dentro de la duración del archivo (la cola final contiene silencio). La diferencia con Node puede deberse al remuestreo y al backend; no se combinan ambas métricas como si fueran una sola prueba. La revisión fijada se verificó también con el evaluador nativo.
+
+Validación final de código: 27 pruebas automatizadas, lint y compilación. No se ha extendido el alcance a grabación por micrófono ni se afirma certificación de accesibilidad o compatibilidad universal.
