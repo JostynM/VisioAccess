@@ -39,6 +39,18 @@ function isSilent(samples) {
   return Math.sqrt(sum / samples.length) < 0.0001;
 }
 
+export function hasRepetitiveText(text) {
+  const words = String(text).toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter(Boolean);
+  const counts = new Map();
+  for (let i = 0; i + 4 <= words.length; i++) {
+    const phrase = words.slice(i, i + 4).join(' ');
+    const count = (counts.get(phrase) || 0) + 1;
+    if (count >= 4) return true;
+    counts.set(phrase, count);
+  }
+  return false;
+}
+
 export function offsetRecognition(result, offset, duration) {
   const chunks = [];
   let invalid = false;
@@ -63,6 +75,7 @@ export async function transcribeInChunks({ audio, recognizer, language, onProgre
   const plan = planAudioChunks(audio);
   const combined = [];
   let approximateTiming = false;
+  let lowConfidence = false;
   for (let index = 0; index < plan.length; index++) {
     const { start, end } = plan[index];
     const offset = start / AUDIO_RATE;
@@ -75,13 +88,14 @@ export async function transcribeInChunks({ audio, recognizer, language, onProgre
         max_new_tokens: 192, num_beams: 1, do_sample: false,
         ...(createStreamer ? { streamer: createStreamer(progress) } : {}),
       });
+      lowConfidence ||= hasRepetitiveText(result.text || (result.chunks || []).map(cue => cue.text || '').join(' '));
       const normalized = offsetRecognition(result, offset, samples.length / AUDIO_RATE);
       combined.push(...normalized.chunks);
       approximateTiming ||= normalized.approximateTiming;
     }
-    const result = { text: combined.map(cue => cue.text).join(' '), chunks: combined.slice(), approximateTiming };
+    const result = { text: combined.map(cue => cue.text).join(' '), chunks: combined.slice(), approximateTiming, lowConfidence };
     onProgress({ status: 'partial', ...progress, processedSeconds: end / AUDIO_RATE, result });
   }
   if (!combined.length) throw new Error('No se detectó voz con tiempos válidos. Comprueba que el archivo tenga audio audible.');
-  return { text: combined.map(cue => cue.text).join(' '), chunks: combined, approximateTiming };
+  return { text: combined.map(cue => cue.text).join(' '), chunks: combined, approximateTiming, lowConfidence };
 }

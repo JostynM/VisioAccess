@@ -62,3 +62,14 @@ test('silence is not sent to recognition, and empty or excessive audio is reject
   assert.throws(()=>planAudioChunks(speech(121)),/2 minutos/);
   assert.throws(()=>planAudioChunks(new Float32Array()),/audio válido/);
 });
+
+
+test('repeated model phrases are flagged without discarding recognized words', async () => {
+  const { hasRepetitiveText } = await import('../src/utils/transcription.js');
+  assert.equal(hasRepetitiveText('Una descripción clara de objetos y distancias para orientar al usuario.'), false);
+  const repeated = 'Esta es una prueba. '.repeat(8);
+  assert.equal(hasRepetitiveText(repeated), true);
+  const result = await transcribeInChunks({ audio: new Float32Array(16000).fill(0.1), recognizer: async () => ({ text: repeated, chunks: [{ text: repeated, timestamp: [0, 1] }] }) });
+  assert.equal(result.lowConfidence, true);
+  assert.match(result.text, /Esta es una prueba/);
+});

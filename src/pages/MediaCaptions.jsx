@@ -122,7 +122,9 @@ export default function MediaCaptions(props) {
           if (data.status === 'error') { fail(data.message); return; }
           if (data.status === 'complete') {
             acceptResult(data.result); stopWorker(); setBusy(false); setProcessed(100);
-            setStatus(data.result.approximateTiming
+            setStatus(data.result.lowConfidence
+              ? 'El reconocimiento terminó, pero contiene frases repetidas y puede ser poco fiable. Corrige el texto antes de usarlo. Algunos tiempos pueden ser aproximados.'
+              : data.result.approximateTiming
               ? 'Transcripción terminada. Se recuperó texto con tiempos aproximados en algunos fragmentos; revísalos antes de exportar.'
               : 'Transcripción terminada. Revisa el texto y los tiempos: el reconocimiento puede cometer errores.');
           }
